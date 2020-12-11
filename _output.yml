@@ -5,7 +5,13 @@ bookdown::gitbook:
       collapse: section
       before: |
         <li><a href="./">MRP Case Studies</a></li>
+      after: null
     fontsettings:
       theme: white
       family: serif
       size: 1
+
+subparagraph: yes
+bookdown::pdf_book:
+  latex_engine: "pdflatex"
+

@@ -1,0 +1,228 @@
+# Appendix {-}
+
+## Data Preprocessing for CCES and Census Data
+
+### CCES
+
+The code below shows in more detail how the processing of the CCES was done. Notice that age, a continous variable, is split into different levels, and that the levels of some factors are modified in order to match the ACS data.
+
+```{r, eval = FALSE}
+library(data.table)
+library(dplyr)
+library(forcats)
+library(tidyr)
+library(reshape2)
+
+# state_abb_as_factor
+# The CCES data uses FIPS codes to identify states, but post-strat data uses
+# 2-letter state abbreviations.  Because FIPS codes are positive integers,
+# we R's factors to map the state abbreviation to its FIPS code.
+# Because the FIPS codes include the district of Columbia and US territories
+# there are some gaps in the numbering system.
+state_as_factor <- function(df, column) {
+    list_states_abb <- datasets::state.abb
+    list_states_num <- c(1,2,4,5,6,8,9,10,12,13,15,16,17,18,19,20,21,22,23,24,
+                         25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,
+                         44,45,46,47,48,49,50,51,53,54,55,56)
+    factor(df[[column]], levels = list_states_num, labels = list_states_abb)
+}
+
+# rewrite CCES demographics as needed for post-stratification
+prep_cces <- function(df) {
+    ## State -- factor
+    df$state <- state_as_factor(df, "inputstate")
+    
+    ## Gender -- dichotomous (coded as -0.5 Female, +0.5 Male)
+    df$male <- abs(df$gender-2)-0.5
+    
+    ## ethnicity -- factor
+    df$eth <- factor(df$race, levels = 1:8,
+                     labels = c("White", "Black", "Hispanic", "Asian", "Native American", "Mixed", "Other", "Middle Eastern")) %>%
+        fct_collapse("Other" = c("Asian", "Other", "Middle Eastern", "Mixed", "Native American"))
+    
+    ## Age -- cut into factor
+    df$age <- 2018 - df$birthyr
+    df$age <- cut(as.integer(df$age), breaks = c(0, 29, 39, 49, 59, 69, 120), 
+                  labels = c("18-29","30-39","40-49","50-59","60-69","70+"),
+                  ordered_result = TRUE)
+    
+    ## Education -- factor
+    df$educ <- factor(as.integer(df$educ), 
+                      levels = 1:6, 
+                      labels = c("No HS", "HS", "Some college", "Associates", "4-Year College", "Post-grad"), ordered = TRUE) %>%
+        fct_collapse("Some college" = c("Some college", "Associates"))  
+
+    return(df)
+}
+
+# return per-question dataframe containing question as 0,1 outcome
+# and just the demographic data columns used in regression
+get_question <- function(df, question, label) {
+    df[[label]] <- abs(df[[question]]-2)
+    # Clean and remove NAs
+    select(df, all_of(label), state, eth, male, age, educ) %>% drop_na()
+}
+
+cces18_df <- read.csv("cces18_common_vv.csv")
+cces18_df <- prep_cces(cces18_df)
+q_abort_df <- get_question(cces18_df, "CC18_321d", "abortion")
+```
+
+### American Community Survey
+
+[IPUMS USA](https://usa.ipums.org/usa/index.shtml)
+(originally, the "Integrated Public Use Microdata Series")
+is a website and database providing access to over sixty integrated,
+high-precision samples of the American population drawn from sixteen
+federal censuses, from the American Community Surveys of 2000-present,
+and from the Puerto Rican Community Surveys of 2005-present.
+This website provides tools to assemble custom datasets: https://usa.ipums.org/usa-action/variables/group.
+There is an interactive interface which steps you through the process of specifying
+the survey, the survey variables, and restrictions on the variables.
+Once your request is fully specified, it is submitted to a jobs queue
+and you will be notified when the custom dataset is available for download.
+
+Alternatively, you can download the raw survey data and process it yourself, as shown here.
+First we download the Public Use Microdata Sample from the American Community Survey [data repository](https://www2.census.gov/programs-surveys/acs/data/pums/2018/5-Year/). The repository contains two .zip files corresponding to each state: one for individual-level variables and other for household-level variables. All the variables considered in our analysis are available in the individual-level files, but we will also download and process the household-level variable income to show how this could be done.
+
+```{r, eval=FALSE}
+dir.create("postrat_data/")
+system('wget -O postrat_data -e robots=off -nd -A "csv_*.zip" -R "index.html","csv_hus.zip","csv_pus.zip"  https://www2.census.gov/programs-surveys/acs/data/pums/2018/5-Year/')
+```
+
+Once we have the dataset, there are two main considerations:
+
+* Focus on the population of interest: We must take into account that the population of interest for the CCES survey, which only considers US citizens above 18 years of age, is different from the population reflected in the ACS. Therefore, we had to remove the cases of underages and non-US citizens in the ACS.
+
+* Match the levels of the two datasets: The levels of the variables in the poststratification table must match the levels of the variables in the CCES dataset. In this case, this required preprocessing the variables of the CCES and ACS in a way that the levels were compatible.
+
+```{r, eval=FALSE}
+list_states_abb <- datasets::state.abb
+list_states_num <- rep(NA, length(list_states_abb))
+
+list_of_postrat_df <- list()
+
+for(i in 1:length(list_states_num)){
+  # Unzip and read household and person files for state i
+  p_name <- paste0("postrat_data/csv_p", tolower(list_states_abb[i]),".zip")
+  h_name <- paste0("postrat_data/csv_h", tolower(list_states_abb[i]),".zip")
+  p_csv_name <- grep('\\.csv$', unzip(p_name, list=TRUE)$Name, ignore.case=TRUE, value=TRUE)
+  temp_df_p_state <- fread(unzip(p_name, files = p_csv_name),
+                           header=TRUE, select=c("SERIALNO","ST","CIT","PWGTP","RAC1P","HISP","SEX","AGEP", "SCHL"))
+  h_csv_name <- grep('\\.csv$', unzip(h_name, list=TRUE)$Name, ignore.case=TRUE, value=TRUE)
+  temp_df_h_state <- fread(unzip(h_name, files = h_csv_name),
+                         header=TRUE, select=c("SERIALNO","FINCP"))
+  
+  # Merge the individual and household level variables according to the serial number
+  temp_df <- merge(temp_df_h_state, temp_df_p_state, by = "SERIALNO")
+
+  # Update list of state numbers that will be used later
+  list_states_num[i] <-  temp_df$ST[1]
+
+  ## Filter by citizenship
+  temp_df <- temp_df %>% filter(CIT!=5)
+
+  ## State
+  temp_df$state <- temp_df$ST
+
+  ## Gender
+  temp_df$male <- abs(temp_df$SEX-2)-0.5
+
+  ## ethnicity
+  temp_df$RAC1P <- factor(temp_df$RAC1P, 
+                          levels = 1:9, 
+                          labels = c("White", "Black", "Native Indian", "Native Alaskan",
+                                     "Native Indian or Alaskan", "Asian", "Pacific Islander", "Other", 
+                                     "Mixed"))
+  temp_df$eth <- fct_collapse(temp_df$RAC1P, "Native American" = c("Native Indian", "Native Alaskan", 
+                                                                   "Native Indian or Alaskan"))
+  temp_df$eth <- fct_collapse(temp_df$eth, "Other" = c("Asian", "Pacific Islander", "Other", 
+                                                       "Native American", "Mixed"))
+  levels(temp_df$eth) <- c(levels(temp_df$eth), "Hispanic")
+  temp_df$eth[(temp_df$HISP!=1) & temp_df$eth=="White"] <- "Hispanic"
+
+  ## Age
+  temp_df$age <- cut(as.integer(temp_df$AGEP), breaks = c(0, 17, 29, 39, 49, 59, 69, 120),
+                     labels = c("0-17", "18-29","30-39","40-49","50-59","60-69","70+"),
+                     ordered_result = TRUE)
+  ## Filter out underages
+  temp_df <- filter(temp_df, age!="0-17")
+  temp_df$age <- droplevels(temp_df$age)
+
+  ## Income (not currently used)
+  temp_df$income <- cut(as.integer(temp_df$FINCP), 
+                        breaks = c(-Inf, 9999, 19999, 29999, 39999, 49999, 59999, 69999, 79999, 99999, 
+                                   119999, 149999, 199999, 249999, 349999, 499999, Inf),
+                        ordered_result = TRUE, labels = c("<$10,000", "$10,000 - $19,999", "$20,000 - $29,999", 
+                                                          "$30,000 - $39,999", "$40,000 - $49,999", 
+                                                          "$50,000 - $59,999", "$60,000 - $69,999", 
+                                                          "$70,000 - $79,999","$80,000 - $99,999", 
+                                                          "$100,000 - $119,999", "$120,000 - $149,999",
+                                                          "$150,000 - $199,999","$200,000 - $249,999", 
+                                                          "$250,000 - $349,999", "$350,000 - $499,999", 
+                                                          ">$500,000"))
+  temp_df$income <- fct_explicit_na(temp_df$income, "Prefer Not to Say")
+
+  ## Education
+  temp_df$educ <- cut(as.integer(temp_df$SCHL), breaks = c(0, 15, 17, 19, 20, 21, 24), ordered_result = TRUE,
+                        labels = c("No HS", "HS", "Some college", "Associates", "4-Year College", "Post-grad"))
+  temp_df$educ <- fct_collapse(temp_df$educ, "Some college" = c("Some college", "Associates"))
+  
+  # Calculate the poststratification table
+  temp_df <- temp_df %>% drop_na(state, eth, male, age, educ, PWGTP) %>% 
+    select(state, eth, male, age, educ, PWGTP)
+  ## Trick to 'expand' the poststratification table so groupby produces all the rows, even the ones with N = 0
+  temp_df_expanded  <- temp_df %>% 
+    expand(state, eth, male, age, educ) %>% 
+    mutate(PWGTP = 0)
+  temp_df <- rbind(temp_df, temp_df_expanded)
+  ## We sum by the inidividual-level weight PWGTP
+  list_of_postrat_df[[i]] <- temp_df %>% 
+    group_by(state, eth, male, age, educ, .drop = FALSE) %>% 
+    summarise(n = sum(as.numeric(PWGTP)))
+
+  print(paste0(list_states_abb[i], " completed"))
+}
+
+postrat_df <- rbindlist(list_of_postrat_df)
+write.csv(postrat_df, "postrat_data.csv")
+```
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE, fig.height=3.5, fig.width=6, fig.align = "center", include=FALSE}
+# We also include some code for easily plotting the binned residuals and a calibration plot for the logistic model.
+
+# Binned residuals(code from https://avehtari.github.io/ROS-Examples/Arsenic/arsenic_logistic_residuals.html)
+binned_resids <- function (x, y, nclass=sqrt(length(x))){
+  breaks.index <- floor(length(x)*(1:(nclass-1))/nclass)
+  breaks <- c (-Inf, sort(x)[breaks.index], Inf)
+  output <- NULL
+  xbreaks <- NULL
+  x.binned <- as.numeric (cut (x, breaks))
+  for (i in 1:nclass){
+    items <- (1:length(x))[x.binned==i]
+    x.range <- range(x[items])
+    xbar <- mean(x[items])
+    ybar <- mean(y[items])
+    n <- length(items)
+    sdev <- sd(y[items])
+    output <- rbind (output, c(xbar, ybar, n, x.range, 2*sdev/sqrt(n)))
+  }
+  colnames (output) <- c ("xbar", "ybar", "n", "x.lo", "x.hi", "2se")
+  return (list (binned=output, xbreaks=xbreaks))
+}
+
+br8 <- binned_resids(fitted(fit), df$abortion-fitted(fit), nclass=40)$binned
+plot(range(br8[,1]), range(br8[,2],br8[,6],-br8[,6]),
+     xlab="Estimated  Pr (support)", ylab="Average residual",
+     type="n", main="Binned residual plot", mgp=c(2,.5,0))
+abline(0,0, col="gray", lwd=.5)
+lines(br8[,1], br8[,6], col="gray", lwd=.5)
+lines(br8[,1], -br8[,6], col="gray", lwd=.5)
+points(br8[,1], br8[,2], pch=20, cex=.5)
+
+# Calibration
+calPlotData<-caret::calibration(y ~ pred, 
+                         data = data.frame(pred=colMeans(posterior_epred(fit)), y = factor(df$abortion)), 
+                         cuts=10, class="1")
+ggplot(calPlotData, auto.key = list(columns = 2)) + ggtitle("Calibration")
+```

@@ -8,11 +8,163 @@ documentclass: book
 bibliography: [book.bib, mrp.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: rstudio/bookdown-demo
 description: "Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan"
 ---
 
-# Notes
 
-These case studies are still under development. Please send any feedback to [jl5522@columbia.edu](jl5522@columbia.edu).
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE, message=FALSE, error=FALSE, warning=FALSE, comment=NA, out.width='85%')
+```
 
+```{r packages-1, echo=FALSE, message=FALSE, cache=FALSE}
+library(rstanarm)
+library(data.table)
+library(dplyr)
+library(forcats)
+library(tidyr)
+library(reshape2)
+
+library(ggplot2)
+library(scales)
+library(bayesplot)
+library(gridExtra)
+library(ggalt)
+library(usmap)
+
+
+theme_set(bayesplot::theme_default())
+
+# Improves performance in some systems, but can be removed if it causes problems
+# Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7 -mtune=corei7')
+
+# Use all available cores
+options(mc.cores = parallel::detectCores(logical = FALSE))
+
+# Use helper functions
+#source("prep_cces.R")
+```
+
+<style type="text/css">
+h1.title {
+  font-size: 32px;
+  text-align: center;
+}
+
+h2 {
+  padding-bottom: 4px;
+}
+
+h4.author {
+  padding-top: 22px;
+  text-align: center;
+  font-style: italic;
+}
+h4.date {
+  padding-top: 14px;
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
+  padding-bottom: 20px;
+}
+</style>
+
+<script>
+function myFunction() {
+    var x = document.getElementById("myDIV");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+function myFunction2() {
+    var x = document.getElementById("myDIV2");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+function myFunction3() {
+    var x = document.getElementById("myDIV3");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+</script>
+<style>
+#myDIV {
+  width: 100%;
+  padding: 20px 30px;
+  background-color: rgba(192,192,192,0.15);
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+#myButton{
+border-color: #008CBA;
+background-color: rgba(192,192,192,0.05);
+color: #008CBA;
+border-radius: 4px;
+}
+
+#myDIV2 {
+  width: 100%;
+  padding: 20px 30px;
+  background-color: rgba(192,192,192,0.15);
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+#myButton2{
+border-color: #008CBA;
+background-color: rgba(192,192,192,0.05);
+color: #008CBA;
+border-radius: 4px;
+}
+
+#myDIV3 {
+  width: 100%;
+  padding: 20px 30px;
+  background-color: rgba(192,192,192,0.15);
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+#myButton3{
+border-color: #008CBA;
+background-color: rgba(192,192,192,0.05);
+color: #008CBA;
+border-radius: 4px;
+}
+</style>
+
+
+# Overview {-}
+
+Multilevel Modeling and Poststratification (MRP) is used in two closely related applications:
+
+1. Small-area estimation: Sub-national surveys are not always available, and even then finding comparable surveys across sub-national units is rare. However, public views at the sub-national level are often central, as many policies are decided by local goverments or sub-national area representatives at national assemblies. MRP allows us to use national surveys to generate reliable estimates of sub-national opinion (@park2004bayesian, @lax2009gay, @lax2009states, @kiewiet2018predicting).
+
+2. Using nonrepresentative surveys: Many surveys face serious difficulties in recruiting representative samples of participants (e.g. because of non-response bias). However, with proper statistical adjustment, nonrepresentative surveys can be used to generate accurate opinion estimates (@wang2015xbox, @downes2018multilevel).
+
+In this case study, we will show how to use MRP to estimate public opinion.
+We start with an overview of the survey and population data
+and walk through the processing necessary to align the two.
+Next, we describe the two essential stages of MRP: building an
+individual-response model and using poststratification.
+The individual-response model takes all the responses in the national survey
+and uses multilevel modeling in order to predict opinion estimates based on
+demographic-geographic subgroups (e.g. the subgroup consisting of
+white women between ages 50-59 with postgraduate education residing in California).
+The poststratification process takes these these opinion estimates by subgroups
+and weights them by the subgroup frequency at the (national or subnational) unit of interest.
+Then we show how MRP can be used to obtain accurate national estimates from a biased sample.
+Lastly, we introduce some practical considerations.
+
+All the code is also available in the [Rmarkdown file on GitHub](https://github.com/JuanLopezMartin/MRPCaseStudy)
+
+
+_These case studies are still under development. Please send comments, questions, and suggestions to [jl5522@columbia.edu](jl5522@columbia.edu)._
