@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Introduction to Multilevel Modeling and Poststratification (MRP) | Multilevel Regression and Poststratification Case Studies</title>
+  <meta name="description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Introduction to Multilevel Modeling and Poststratification (MRP) | Multilevel Regression and Poststratification Case Studies" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Introduction to Multilevel Modeling and Poststratification (MRP) | Multilevel Regression and Poststratification Case Studies" />
+  
+  <meta name="twitter:description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  
+
+<meta name="author" content="Juan Lopez-Martin, Justin H. Phillips, and Andrew Gelman" />
+
+
+<meta name="date" content="2020-12-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="survey-and-population-datasets.html"/>
+
+<script src="libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">MRP Case Studies</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a></li>
+<li class="chapter" data-level="1" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html"><i class="fa fa-check"></i><b>1</b> Survey and Population Datasets</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#survey-data"><i class="fa fa-check"></i><b>1.1</b> Survey Data</a></li>
+<li class="chapter" data-level="1.2" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#pop-data"><i class="fa fa-check"></i><b>1.2</b> Population Data</a></li>
+<li class="chapter" data-level="1.3" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#multilevel-model-group-level-predictors"><i class="fa fa-check"></i><b>1.3</b> Multilevel Model Group-level Predictors</a></li>
+<li class="chapter" data-level="1.4" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#explore-data"><i class="fa fa-check"></i><b>1.4</b> Exploratory Data Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="mrp-intro.html"><a href="mrp-intro.html"><i class="fa fa-check"></i><b>2</b> Introduction to Multilevel Modeling and Poststratification (MRP)</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="mrp-intro.html"><a href="mrp-intro.html#first-stage-estimating-the-individual-response-model"><i class="fa fa-check"></i><b>2.1</b> First stage: Estimating the Individual-Response Model</a></li>
+<li class="chapter" data-level="2.2" data-path="mrp-intro.html"><a href="mrp-intro.html#second-stage-poststratification"><i class="fa fa-check"></i><b>2.2</b> Second Stage: Poststratification</a></li>
+<li class="chapter" data-level="2.3" data-path="mrp-intro.html"><a href="mrp-intro.html#postrat-state"><i class="fa fa-check"></i><b>2.3</b> MRP for Small Area Estimation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="mrp-intro.html"><a href="mrp-intro.html#estimation-for-subgroups-within-sub-national-units"><i class="fa fa-check"></i><b>2.3.1</b> Estimation for subgroups within sub-national units</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="mrp-intro.html"><a href="mrp-intro.html#adjusting-for-nonrepresentative-surveys"><i class="fa fa-check"></i><b>2.4</b> Adjusting for Nonrepresentative Surveys</a></li>
+<li class="chapter" data-level="2.5" data-path="mrp-intro.html"><a href="mrp-intro.html#practical-considerations"><i class="fa fa-check"></i><b>2.5</b> Practical Considerations</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="mrp-intro.html"><a href="mrp-intro.html#census-incompletness-and-uncertainty"><i class="fa fa-check"></i><b>2.5.1</b> Census incompletness and uncertainty</a></li>
+<li class="chapter" data-level="2.5.2" data-path="mrp-intro.html"><a href="mrp-intro.html#nonreponse-and-missing-data"><i class="fa fa-check"></i><b>2.5.2</b> Nonreponse and missing data</a></li>
+<li class="chapter" data-level="2.5.3" data-path="mrp-intro.html"><a href="mrp-intro.html#model-complexity"><i class="fa fa-check"></i><b>2.5.3</b> Model complexity</a></li>
+<li class="chapter" data-level="2.5.4" data-path="mrp-intro.html"><a href="mrp-intro.html#empty-cells-in-the-poststratification-table"><i class="fa fa-check"></i><b>2.5.4</b> Empty cells in the poststratification table</a></li>
+<li class="chapter" data-level="2.5.5" data-path="mrp-intro.html"><a href="mrp-intro.html#subnational-units-not-represented-in-the-survey"><i class="fa fa-check"></i><b>2.5.5</b> Subnational units not represented in the survey</a></li>
+<li class="chapter" data-level="2.5.6" data-path="mrp-intro.html"><a href="mrp-intro.html#computational-issues"><i class="fa fa-check"></i><b>2.5.6</b> Computational issues</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Multilevel Regression and Poststratification Case Studies</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="mrp-intro" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Introduction to Multilevel Modeling and Poststratification (MRP)</h1>
+<p>The first stage of MRP is building an individual-response model
+whch takes all responses in a (national-level) survey
+and uses a multilevel regression model to get estimates and make predictions based on
+demographic-geographic subgroups (e.g. the subgroup consisting of
+white women between ages 50-59 with postgraduate education residing in California).
+The second stage of MRP takes the modeled estimate for each subgroup
+and weights it by the subgroup frequency at the (national or subnational) unit of interest.</p>
+<div id="first-stage-estimating-the-individual-response-model" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> First stage: Estimating the Individual-Response Model</h2>
+<p>In the first stage we use a multilevel logistic regression model to predict the outcome measure given the different factors we are considering. Having a plausible model to predict opinion is central for MRP to work well.
+The model we use in this example is described below. It includes varying intercepts for age, ethnicity, and state, where the variation for the state intercepts is in turn influenced by the region effects (coded as indicator variables) and the Republican vote share in the 2016 election. As there are only two levels for gender, it is preferable to model it as a predictor for computational efficiency. Additionally, we include varying intercepts for the interaction between male and ethnicity, education and age, and education and ethnicity (see <span class="citation">Ghitza and Gelman (<a href="#ref-ghitza2013deep" role="doc-biblioref">2013</a>)</span> for an in-depth discussion on the advantages of including interactions).</p>
+<p><span class="math display">\[
+Pr(y_i = 1) = logit^{-1}(
+\alpha_{\rm s[i]}^{\rm state}
++ \alpha_{\rm a[i]}^{\rm age}
++ \alpha_{\rm r[i]}^{\rm eth}
++ \alpha_{\rm e[i]}^{\rm educ}
++ \beta^{\rm male} \cdot {\rm Male}_{\rm i} 
++ \alpha_{\rm g[i], r[i]}^{\rm male.eth}
++ \alpha_{\rm e[i], a[i]}^{\rm educ.age}
++ \alpha_{\rm e[i], r[i]}^{\rm educ.eth}
+)
+\]</span>
+where:</p>
+<p><span class="math display">\[
+\begin{align*}
+\alpha_{\rm s}^{\rm state} &amp;\sim {\rm Normal}(\gamma^0 + \gamma^{\rm south} \cdot {\rm South}_{\rm s} + \gamma^{\rm northcentral} \cdot {\rm NorthCentral}_{\rm s} + \gamma^{\rm west} \cdot {\rm West}_{\rm s} + \gamma^{\rm repvote} \cdot {\rm RepVote}_{\rm s}, \sigma^{\rm state}) \textrm{ for s = 1,...,50}\\
+\alpha_{\rm a}^{\rm age} &amp; \sim {\rm Normal}(0,\sigma^{\rm age}) \textrm{ for a = 1,...,6}\\
+\alpha_{\rm r}^{\rm eth} &amp; \sim {\rm Normal}(0,\sigma^{\rm eth}) \textrm{ for r = 1,...,4}\\
+\alpha_{\rm e}^{\rm educ} &amp; \sim {\rm Normal}(0,\sigma^{\rm educ}) \textrm{ for e = 1,...,5}\\
+\alpha_{\rm g,r}^{\rm male.eth} &amp; \sim {\rm Normal}(0,\sigma^{\rm male.eth}) \textrm{ for g = 1,2 and r = 1,...,4}\\
+\alpha_{\rm e,a}^{\rm educ.age} &amp; \sim {\rm Normal}(0,\sigma^{\rm educ.age}) \textrm{ for e = 1,...,5 and a = 1,...,6}\\
+\alpha_{\rm e,r}^{\rm educ.eth} &amp; \sim {\rm Normal}(0,\sigma^{\rm educ.eth}) \textrm{ for e = 1,...,5 and r = 1,...,4}\\
+\end{align*}
+\]</span></p>
+<button id="myButton" onclick="myFunction()">
+Show model explanation
+</button>
+<div id="myDIV" style="display:none">
+<p>People without a background in multilevel modeling may be surprised to see this formulation. Why are we using terms such as <span class="math inline">\(\alpha_{\rm eth}^{\rm eth}\)</span> instead of the much more common method of creating an indicator variable for each state (e.g. <span class="math inline">\(\beta^{\rm white} \cdot {\rm White}_{i} + \beta^{\rm black} \cdot {\rm Black}_{i} + ...\)</span>)? The answer is that this approach allows to share information between the levels of each variable (e.g. different ethnicities), preventing levels with less data from being too sensitive to the few observed values. For instance, it could happen that we only surveyed ten Hispanics, and that none of them turned out to agree that employers should be able to decline abortion coverage in insurance plans. Under the typical approach, the model would take this data too seriously and consider that Hispanics necessarily oppose this statement (i.e. <span class="math inline">\(\beta^{\rm hispanic} = - \infty\)</span>). We know, however, that this is not the case. It may be that Hispanics are less likely to support the statement, but from such a small sample size it is impossible to know. What the multilevel model will do is to partially pool the varying intercept for Hispanics towards the average accross all ethnicities (i.e. in our model, the average across all ethnicities is fixed at zero), making it negative but far from the unrealistic negative infinity. This pooling will be data-dependent, meaning that it will pool the varying intercept towards the average more strongly the smaller the sample size in that level. In fact, if the sample size for a certain level is zero, the estimate varying intercept would be the average coefficient for all the other levels.</p>
+<ul>
+<li><p><span class="math inline">\(\alpha_{\rm a}^{\rm age}\)</span>: The effect of subject <span class="math inline">\(i\)</span>’s age on the probability of supporting the statement.</p></li>
+<li><p><span class="math inline">\(\alpha_{\rm r}^{\rm eth}\)</span>: The effect of subject <span class="math inline">\(i\)</span>’s ethnicity on the probability of supporting the statement.</p></li>
+<li><p><span class="math inline">\(\alpha_{\rm e}^{\rm educ}\)</span>: The effect of subject <span class="math inline">\(i\)</span>’s education on the probability of supporting the statement.</p></li>
+<li><p><span class="math inline">\(\alpha_{\rm s}^{\rm state}\)</span>: The effect of subject <span class="math inline">\(i\)</span>’s state on the probability of supporting the statement. As we have a state-level predictor (the Republican vote share in the 2016 election), we need to build another model in which <span class="math inline">\(\alpha_{\rm s}^{\rm state}\)</span> is the outcome of a linear regression with an expected value determined by an intercept <span class="math inline">\(\gamma^0\)</span>, the effect of the region coded as indicator variables (with Northeast as the baseline level), and the effect of the Republican vote share <span class="math inline">\(\gamma^{\rm demvote}\)</span>.</p></li>
+<li><p><span class="math inline">\(\beta^{\rm male}\)</span>: The average effect of being male on the probability of supporting abortion. We could have used a similar formulation as in the previous cases (i.e. <span class="math inline">\(\alpha_{\rm g}^{\rm gender} \sim N(0, \sigma^{\rm gender})\)</span>), but having only two levels (i.e. male and female) can create some estimation problems.</p></li>
+<li><p><span class="math inline">\(\alpha_{\rm e,r}^{\rm male.eth}\)</span> and <span class="math inline">\(\alpha_{\rm e,r}^{\rm educ.age}\)</span>: In the survey literature it is common practice to include these two interactions.</p></li>
+<li><p><span class="math inline">\(\alpha_{\rm e,r}^{\rm educ.eth}\)</span>: In the next section we will explore public opinion on required abortion coverage at the different levels of education and ethnicity. It is, therefore, a good idea to also include this interaction.</p></li>
+</ul>
+<p>See <span class="citation">Gelman and Hill (<a href="#ref-gelman2007data" role="doc-biblioref">2007</a>)</span> for an introduction to multilevel modeling.</p>
+</div>
+<p><br></p>
+<p>The <code>rstanarm</code> package allows the user to conduct complicated regression analyses in Stan with the simplicity of standard formula notation in R. <code>stan_glmer()</code>, the function that allows to fit generalized linear multilevel models, uses the same notation as the <code>lme4</code> package (see documentation <a href="https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf">here</a>). That is, we specify the varying intercepts as <code>(1 | group)</code> and the interactions are expressed as <code>(1 | group1:group2)</code>, where the <code>:</code> operator creates a new grouping factor that consists of the combined levels of the two groups (i.e. this is the same as pasting together the levels of both factors). However, this syntax only accepts predictors at the individual level, and thus the two state-level predictors must be expanded to the individual level (see [p. 265-266]<span class="citation">Gelman and Hill (<a href="#ref-gelman2007data" role="doc-biblioref">2007</a>)</span>). Notice that:</p>
+<p><span class="math display">\[
+\begin{align*}
+\alpha_{\rm s}^{\rm state} &amp;\sim {\rm Normal}(\gamma^0 + \gamma^{\rm south} \cdot {\rm South}_{\rm s} + \gamma^{\rm northcentral} \cdot {\rm NorthCentral}_{\rm s} + \gamma^{\rm west} \cdot {\rm West}_{\rm s} + \gamma^{\rm repvote} \cdot {\rm RepVote}_{\rm s}, \sigma^{\rm state}) \\
+&amp;= \underbrace{\gamma^0}_\text{Intercept} + 
+\underbrace{{\rm Normal}(0, \sigma^{\rm state})}_\text{State varying intercept} + 
+\underbrace{\gamma^{\rm south} \cdot {\rm South}_{\rm s} + \gamma^{\rm northcentral} \cdot {\rm NorthCentral}_{\rm s} + \gamma^{\rm west} \cdot {\rm West}_{\rm s} + \gamma^{\rm repvote} \cdot {\rm RepVote}_{\rm s}}_\text{State-level predictors expanded to the individual level}
+\end{align*}
+\]</span></p>
+<p>Consequently, we can then reexpress the model as:</p>
+<p><span class="math display">\[
+Pr(y_i = 1) = logit^{-1}(
+\gamma^0
++ \alpha_{\rm s[i]}^{\rm state}
++ \alpha_{\rm a[i]}^{\rm age}
++ \alpha_{\rm r[i]}^{\rm eth}
++ \alpha_{\rm e[i]}^{\rm educ}
++ \beta^{\rm male} \cdot {\rm Male}_{\rm i} 
++ \alpha_{\rm g[i], r[i]}^{\rm male.eth}
++ \alpha_{\rm e[i], a[i]}^{\rm educ.age}
++ \alpha_{\rm e[i], r[i]}^{\rm educ.eth}
++ \gamma^{\rm south} \cdot {\rm South}_{\rm s} \\
++ \gamma^{\rm northcentral} \cdot {\rm NorthCentral}_{\rm s} 
++ \gamma^{\rm west} \cdot {\rm West}_{\rm s} 
++ \gamma^{\rm repvote} \cdot {\rm RepVote}_{\rm s})
+\]</span></p>
+<p>In the previous version of the model, <span class="math inline">\(\alpha_{\rm s[i]}^{\rm state}\)</span> was informed by several state-level predictors. This reparametrization expands the state-level predictors at the individual level, and thus <span class="math inline">\(\alpha_{\rm s[i]}^{\rm state}\)</span> now represents the variance introduced by the state adjusting for the region and 2016 Republican vote share. Similarly, <span class="math inline">\(\gamma^0\)</span>, which previously represented the state-level intercept, now becomes the individual-level intercept. The two parameterizations of the multilevel model are mathematically equivalent, and using one or the other is simply a matter of preference. The former one highlights the role that state-level predictos have in accounting for structured differences among the states, while the later is closer to the <code>rstanarm</code> syntax.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="mrp-intro.html#cb10-1" aria-hidden="true"></a><span class="co"># Expand state-level predictors  to the individual level</span></span>
+<span id="cb10-2"><a href="mrp-intro.html#cb10-2" aria-hidden="true"></a>q_abort_10K_df&lt;-<span class="st"> </span><span class="kw">left_join</span>(q_abort_10K_df, statepred_df, <span class="dt">by =</span> <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">abortion</th>
+<th align="left">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+<th align="right">repvote</th>
+<th align="left">region</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">WI</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">60-69</td>
+<td align="left">4-Year College</td>
+<td align="right">0.5040799</td>
+<td align="left">North Central</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">NJ</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">60-69</td>
+<td align="left">HS</td>
+<td align="right">0.4271581</td>
+<td align="left">Northeast</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">FL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">40-49</td>
+<td align="left">HS</td>
+<td align="right">0.5061884</td>
+<td align="left">South</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">FL</td>
+<td align="left">White</td>
+<td align="right">0.5</td>
+<td align="left">70+</td>
+<td align="left">Some college</td>
+<td align="right">0.5061884</td>
+<td align="left">South</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">IL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">50-59</td>
+<td align="left">Some college</td>
+<td align="right">0.4097995</td>
+<td align="left">North Central</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">OK</td>
+<td align="left">Other</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Some college</td>
+<td align="right">0.6930474</td>
+<td align="left">South</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="mrp-intro.html#cb11-1" aria-hidden="true"></a><span class="co"># Fit in stan_glmer</span></span>
+<span id="cb11-2"><a href="mrp-intro.html#cb11-2" aria-hidden="true"></a><span class="co"># fit &lt;- stan_glmer(abortion ~ (1 | state) + (1 | eth) + (1 | educ) + male +</span></span>
+<span id="cb11-3"><a href="mrp-intro.html#cb11-3" aria-hidden="true"></a><span class="co">#                    (1 | male:eth) + (1 | educ:age) + (1 | educ:eth) +</span></span>
+<span id="cb11-4"><a href="mrp-intro.html#cb11-4" aria-hidden="true"></a><span class="co">#                     repvote + factor(region),</span></span>
+<span id="cb11-5"><a href="mrp-intro.html#cb11-5" aria-hidden="true"></a><span class="co">#  family = binomial(link = &quot;logit&quot;),</span></span>
+<span id="cb11-6"><a href="mrp-intro.html#cb11-6" aria-hidden="true"></a><span class="co">#  data = q_abort_10K_df,</span></span>
+<span id="cb11-7"><a href="mrp-intro.html#cb11-7" aria-hidden="true"></a><span class="co">#  prior = normal(0, 1, autoscale = TRUE),</span></span>
+<span id="cb11-8"><a href="mrp-intro.html#cb11-8" aria-hidden="true"></a><span class="co">#  prior_covariance = decov(scale = 0.50),</span></span>
+<span id="cb11-9"><a href="mrp-intro.html#cb11-9" aria-hidden="true"></a><span class="co">#  adapt_delta = 0.99,</span></span>
+<span id="cb11-10"><a href="mrp-intro.html#cb11-10" aria-hidden="true"></a><span class="co">#  refresh = 0,</span></span>
+<span id="cb11-11"><a href="mrp-intro.html#cb11-11" aria-hidden="true"></a><span class="co">#  seed = 1010)</span></span>
+<span id="cb11-12"><a href="mrp-intro.html#cb11-12" aria-hidden="true"></a> </span>
+<span id="cb11-13"><a href="mrp-intro.html#cb11-13" aria-hidden="true"></a><span class="co"># saveRDS(fit, file = &quot;fit_mrp_1.rds&quot;)</span></span>
+<span id="cb11-14"><a href="mrp-intro.html#cb11-14" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;fit_mrp_1.rds&quot;</span>)</span></code></pre></div>
+<p>As a first pass to check whether the model is performing well, we must check that there are no warnings about divergences, failure to converge or tree depth. Fitting the model with the default settings produced a few divergent transitions, and thus we decided to try increasing <code>adapt_delta</code> to 0.99 and introducing stronger priors than the <code>rstanarm</code> defaults. After doing this, the divergences dissapeared. In the <a href="">Computational Issues</a> subsection of this case study we provide more details about divergent transitions and potential solutions.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="mrp-intro.html#cb12-1" aria-hidden="true"></a><span class="kw">print</span>(fit)</span></code></pre></div>
+<pre><code>stan_glmer
+ family:       binomial [logit]
+ formula:      abortion ~ (1 | state) + (1 | eth) + (1 | educ) + male + (1 | 
+       male:eth) + (1 | educ:age) + (1 | educ:eth) + repvote + factor(region)
+ observations: 10000
+------
+                        Median MAD_SD
+(Intercept)             -1.3    0.3  
+male                     0.3    0.1  
+repvote                  1.9    0.3  
+factor(region)Northeast  0.0    0.1  
+factor(region)South      0.2    0.1  
+factor(region)West       0.0    0.1  
+
+Error terms:
+ Groups   Name        Std.Dev.
+ state    (Intercept) 0.131   
+ educ:age (Intercept) 0.231   
+ educ:eth (Intercept) 0.099   
+ male:eth (Intercept) 0.188   
+ eth      (Intercept) 0.341   
+ educ     (Intercept) 0.277   
+Num. levels: state 50, educ:age 18, educ:eth 12, male:eth 8, eth 4, educ 3 
+
+------
+* For help interpreting the printed output see ?print.stanreg
+* For info on the priors used see ?prior_summary.stanreg</code></pre>
+<button id="myButton2" onclick="myFunction2()">
+Show model interpretation
+</button>
+<div id="myDIV2" style="display:none">
+<ul>
+<li><p><code>Intercept</code> (<span class="math inline">\(\gamma^0\)</span>): The global intercept corresponds to the expected outcome in the logit scale when having all the predictors equal to zero. In this case, this does not have a clear interpretation, as it is then influenced by the varying intercepts for state, age, ethnicity, education, and interactions. Furthermore, it corresponds to the impractical scenario of someone in a state with zero Republican vote share.</p></li>
+<li><p><code>male</code> (<span class="math inline">\(\beta^{\rm male}\)</span>): The median estimate for this coefficient is 0.4, with a standard error (measured using the Mean Absolute Deviation) of 0.1. Using the divide-by-four rule (<span class="citation">Gelman, Hill, and Vehtari (<a href="#ref-gelman2020raos" role="doc-biblioref">2020</a>)</span>, Chapter 13), we see that, adjusting for the other covariates, males present up to a <span class="math inline">\(10\% \pm 2.5\%\)</span> higher probability of supporting the right of employers to decline coverage of abortions relative to females.</p></li>
+<li><p><code>repvote</code> (<span class="math inline">\(\gamma^{\rm repvote}\)</span>): As the scale of <code>repvote</code> was between 0 and 1, this coefficient corresponds to the difference in probability of supporting the statement between someone that was in a state in which no one voted Republican to someone whose state voted all Republican. This is not reasonable, and therefore we start by dividing the median coefficient by 10. Doing this, we consider a difference of a 10% increase in Republican vote share. This means that we expect that someone from a state with a 55% Republican vote share has approximately <span class="math inline">\(\frac{1.5}{10}/4 = 4\%\)</span> (<span class="math inline">\(\pm 1\%\)</span>) higher probability of supporting the statement relative to another individual with similar characteristics from a state in which Republicans received 45% of the vote.</p></li>
+<li><p><code>regionSouth</code> (<span class="math inline">\(\gamma^{\rm south}\)</span>): According to the model, we expect that someone from a state in the south has, adjusting for the other covariates, up to a 0.1/4 = 2.5% (<span class="math inline">\(\pm 2.5\%\)</span>) higher probability of supporting the statement relative to someone from the Northeast, which was the baseline category. The interpretation for <code>regionNorthCentral</code> and <code>regionWest</code> is similar.</p></li>
+<li><p><code>Error terms</code> (<span class="math inline">\(\sigma^{\rm state}\)</span>, <span class="math inline">\(\sigma^{\rm age}\)</span>, <span class="math inline">\(\sigma^{\rm eth}\)</span>, <span class="math inline">\(\sigma^{\rm educ}\)</span>, <span class="math inline">\(\sigma^{\rm male.eth}\)</span>, <span class="math inline">\(\sigma^{\rm educ.age}\)</span>, <span class="math inline">\(\sigma^{\rm educ.eth}\)</span>): Remember that the intercepts for the different levels of state, age, ethnicity, education, and the specified interactions are distributed following a normal distribution centered at zero and with a standard deviation that is estimated from the data. The <code>Error terms</code> section gives us the estimates for these group-level standard deviations. For instance, <span class="math inline">\(\alpha_{\rm r}^{\rm ethnicity} \sim {\rm Normal}(0, \sigma^{\rm ethnicity})\)</span>, where the median estimate for <span class="math inline">\(\sigma^{\rm ethnicity}\)</span> is 0.43. In other words, the variyng intercepts for the different ethnicity groups have a standard deviation that is estimated to be 0.43 on the logit scale, or 0.43/4 = 0.11 on the probability scale. In some cases, we may also want to check the intercepts corresponding to the individual levels of a factor. In <code>rstanarm</code>, this can be done using <code>fit$coefficients</code>. For instance, the median values for the varying intercepts of race are <span class="math inline">\(\alpha^{\rm eth}_{r = {\rm White}}\)</span> = 0.12, <span class="math inline">\(\alpha^{\rm eth}_{r = {\rm Black}}\)</span> = -0.24, <span class="math inline">\(\alpha^{\rm eth}_{r = {\rm Hispanic}}\)</span> = 0.06, <span class="math inline">\(\alpha^{\rm eth}_{r = {\rm Other}}\)</span> = 0.03.</p></li>
+</ul>
+</div>
+<p><br></p>
+</div>
+<div id="second-stage-poststratification" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Second Stage: Poststratification</h2>
+<p>The individual-response model predicts support on the option for declining abortion coverage given a number of factor-type predictors.
+To go from this model to a national or sub-national estimate, we need to weight the model predictions for the different subgroups
+by the actual frequency of these subgroups, as expressed by the formula</p>
+<p><span class="math display">\[
+\theta^{MRP} = \frac{\sum N_{\rm subgroup} \theta_{\rm subgroup}}{\sum N_{\rm subgroup}}
+\]</span></p>
+<p>where <span class="math inline">\(\theta^{MRP}\)</span> is the MRP estimate, <span class="math inline">\(\theta_{\rm subgroup}\)</span> corresponds to the model estimate for a specific subgroup (e.g. young Hispanic men with a High School diploma in Arkansas), and <span class="math inline">\(N_{\rm subgroup}\)</span> corresponds to the number of people in that subgroup according to the ACS. For a more in-depth review of poststratification, see Chapter 13 of <span class="citation">Gelman, Hill, and Vehtari (<a href="#ref-gelman2020raos" role="doc-biblioref">2020</a>)</span>.</p>
+<p>The values of <span class="math inline">\(\theta_{subgroup}\)</span> for the different subgroups can be obtained with the <code>posterior_epred()</code> function. Of course, as <code>stan_glmer()</code> performs Bayesian inference, <span class="math inline">\(\theta_{subgroup}\)</span> for any given subgroup will not be a single point estimate but a vector of posterior draws.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="mrp-intro.html#cb14-1" aria-hidden="true"></a><span class="co"># Expand state level predictors  to the individual level</span></span>
+<span id="cb14-2"><a href="mrp-intro.html#cb14-2" aria-hidden="true"></a>postrat_df &lt;-<span class="st"> </span><span class="kw">left_join</span>(postrat_df, statepred_df, <span class="dt">by =</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb14-3"><a href="mrp-intro.html#cb14-3" aria-hidden="true"></a>knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(postrat_df), <span class="dt">format =</span> <span class="st">&#39;markdown&#39;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">X</th>
+<th align="left">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+<th align="right">n</th>
+<th align="right">repvote</th>
+<th align="left">region</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">No HS</td>
+<td align="right">23948</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">HS</td>
+<td align="right">59378</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Some college</td>
+<td align="right">104855</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">4-Year College</td>
+<td align="right">37066</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Post-grad</td>
+<td align="right">9378</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">30-39</td>
+<td align="left">No HS</td>
+<td align="right">14303</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+</tbody>
+</table>
+<p>The function <code>posterior_epred()</code> returns a matrix <span class="math inline">\(P\)</span> with <span class="math inline">\(D\)</span> rows and <span class="math inline">\(J\)</span> columns, where <span class="math inline">\(D\)</span> corresponds to the number of draws from the posterior distribution (in this case 1000, as we specified <code>draws = 1000</code>) and <span class="math inline">\(J\)</span> is the number of subgroups in the poststratification table (i.e. 12,000). This matrix is multiplied by a vector <span class="math inline">\(k\)</span> of length <span class="math inline">\(J\)</span> that contains the number of people in each subgroup of the poststratification table. This results in a vector of length <span class="math inline">\(D\)</span> that is then divided by the sum of the people considered in the poststratification table, a scalar which is calculated by adding all the values in <span class="math inline">\(k\)</span>.</p>
+<p><span class="math display">\[\theta^{MRP} = \frac{P \times k}{\sum_j^J k_j}\]</span></p>
+<p>The resulting vector <span class="math inline">\(\theta^{MRP}\)</span> contains <span class="math inline">\(D\)</span> estimates for the national-level statement support.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="mrp-intro.html#cb15-1" aria-hidden="true"></a><span class="co"># posterior_epred returns the posterior estimates for each cell of postrat_df</span></span>
+<span id="cb15-2"><a href="mrp-intro.html#cb15-2" aria-hidden="true"></a>epred_mat &lt;-<span class="st"> </span><span class="kw">posterior_epred</span>(fit, <span class="dt">newdata =</span> postrat_df, <span class="dt">draws =</span> <span class="dv">1000</span>)</span>
+<span id="cb15-3"><a href="mrp-intro.html#cb15-3" aria-hidden="true"></a>epred_vec &lt;-<span class="st"> </span>epred_mat <span class="op">%*%</span><span class="st"> </span>postrat_df<span class="op">$</span>n <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(postrat_df<span class="op">$</span>n)</span>
+<span id="cb15-4"><a href="mrp-intro.html#cb15-4" aria-hidden="true"></a>theta_mrp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(epred_vec), <span class="dt">sd =</span> <span class="kw">sd</span>(epred_vec))</span>
+<span id="cb15-5"><a href="mrp-intro.html#cb15-5" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;MRP estimate mean, sd: &quot;</span>, <span class="kw">round</span>(theta_mrp, <span class="dv">2</span>), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>MRP estimate mean, sd:  0.45 0.03 </code></pre>
+<p>Compare the estimated results (above) to the 10,000-person unadjusted sample estimate and to the full survey:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="mrp-intro.html#cb17-1" aria-hidden="true"></a>sample_popn_support &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(q_abort_10K_df<span class="op">$</span>abortion), <span class="dt">se =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>(q_abort_10K_df<span class="op">$</span>abortion)<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span><span class="kw">mean</span>(q_abort_10K_df<span class="op">$</span>abortion))<span class="op">/</span><span class="kw">nrow</span>(df)))</span>
+<span id="cb17-2"><a href="mrp-intro.html#cb17-2" aria-hidden="true"></a></span>
+<span id="cb17-3"><a href="mrp-intro.html#cb17-3" aria-hidden="true"></a>all_popn_support &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(q_abort_df<span class="op">$</span>abortion),</span>
+<span id="cb17-4"><a href="mrp-intro.html#cb17-4" aria-hidden="true"></a>                   <span class="dt">se =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>(q_abort_df<span class="op">$</span>abortion)<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span><span class="kw">mean</span>(q_abort_df<span class="op">$</span>abortion))<span class="op">/</span><span class="kw">nrow</span>(q_abort_df)))</span>
+<span id="cb17-5"><a href="mrp-intro.html#cb17-5" aria-hidden="true"></a></span>
+<span id="cb17-6"><a href="mrp-intro.html#cb17-6" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Unadjusted survey sub-sample mean, sd: &quot;</span>, <span class="kw">round</span>(sample_popn_support, <span class="dv">2</span>), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Unadjusted survey sub-sample mean, sd:  0.44 </code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="mrp-intro.html#cb19-1" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Unadjusted full survey mean, sd: &quot;</span>, <span class="kw">round</span>(all_popn_support, <span class="dv">2</span>), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Unadjusted full survey mean, sd:  0.43 0 </code></pre>
+<p>At the national level, both the unadjusted sample estimate and the MRP estimate are quite close to the results of the full survey. In other words, MRP is not providing a notable advantage against the unadjusted sample national estimates. However, it is important to clarify that we were somewhat lucky in obtaining this result as a product of using data from the CCES, a high quality survey that intends to be representative (and appears to be, at least with respect to the variables considered in our poststratification table). Many real-world surveys are not as representative relative to the variables considered in the poststratification step, and in these cases MRP will help correcting the biased estimates from the unadjusted survey. We will see an example of this in section (to-be-crosslined), where we exemplify how MRP adjusts a clearly biased sample.</p>
+</div>
+<div id="postrat-state" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> MRP for Small Area Estimation</h2>
+<p>At the sub-national level, the utility of MRP becomes apparent.
+To demonstrate, we estimate the per-state support for employer’s right to decline coverage of abortion:</p>
+<p><span class="math display">\[
+y_{\rm state}^{MRP} = \frac{\sum_{\rm subgroup \in state} N_{\rm subgroup} \theta_{\rm subgroup}}{\sum_{\rm subgroup \in state} N_{\rm subgroup}}
+\]</span></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="mrp-intro.html#cb21-1" aria-hidden="true"></a><span class="co"># National mean</span></span>
+<span id="cb21-2"><a href="mrp-intro.html#cb21-2" aria-hidden="true"></a>pop_estimate_all &lt;-<span class="st"> </span><span class="kw">mean</span>(q_abort_df<span class="op">$</span>abortion)</span>
+<span id="cb21-3"><a href="mrp-intro.html#cb21-3" aria-hidden="true"></a></span>
+<span id="cb21-4"><a href="mrp-intro.html#cb21-4" aria-hidden="true"></a><span class="co"># Per state mean, raw counts</span></span>
+<span id="cb21-5"><a href="mrp-intro.html#cb21-5" aria-hidden="true"></a>state_estimates_all &lt;-<span class="st"> </span>q_abort_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(state) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">estimate =</span> <span class="kw">mean</span>(abortion))</span>
+<span id="cb21-6"><a href="mrp-intro.html#cb21-6" aria-hidden="true"></a>state_n_all &lt;-<span class="st"> </span>q_abort_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(state) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">N_all =</span> <span class="kw">n</span>())</span>
+<span id="cb21-7"><a href="mrp-intro.html#cb21-7" aria-hidden="true"></a>state_estimates_all<span class="op">$</span>statename &lt;-<span class="st"> </span>state_ab</span>
+<span id="cb21-8"><a href="mrp-intro.html#cb21-8" aria-hidden="true"></a></span>
+<span id="cb21-9"><a href="mrp-intro.html#cb21-9" aria-hidden="true"></a><span class="co"># Create empty dataframe</span></span>
+<span id="cb21-10"><a href="mrp-intro.html#cb21-10" aria-hidden="true"></a>num_states =<span class="st"> </span><span class="kw">length</span>(state_fips)</span>
+<span id="cb21-11"><a href="mrp-intro.html#cb21-11" aria-hidden="true"></a>state_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb21-12"><a href="mrp-intro.html#cb21-12" aria-hidden="true"></a>  <span class="dt">state_fips =</span> state_fips,</span>
+<span id="cb21-13"><a href="mrp-intro.html#cb21-13" aria-hidden="true"></a>  <span class="dt">state =</span> state_ab,</span>
+<span id="cb21-14"><a href="mrp-intro.html#cb21-14" aria-hidden="true"></a>  <span class="dt">mrp_state_support =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states),</span>
+<span id="cb21-15"><a href="mrp-intro.html#cb21-15" aria-hidden="true"></a>  <span class="dt">mrp_state_sd =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states),</span>
+<span id="cb21-16"><a href="mrp-intro.html#cb21-16" aria-hidden="true"></a>  <span class="dt">sample_state_support =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states),</span>
+<span id="cb21-17"><a href="mrp-intro.html#cb21-17" aria-hidden="true"></a>  <span class="dt">all_state_support =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states),</span>
+<span id="cb21-18"><a href="mrp-intro.html#cb21-18" aria-hidden="true"></a>  <span class="dt">N =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states),</span>
+<span id="cb21-19"><a href="mrp-intro.html#cb21-19" aria-hidden="true"></a>  <span class="dt">N_all =</span> <span class="kw">rep</span>(<span class="ot">NA</span>, num_states)</span>
+<span id="cb21-20"><a href="mrp-intro.html#cb21-20" aria-hidden="true"></a>)</span>
+<span id="cb21-21"><a href="mrp-intro.html#cb21-21" aria-hidden="true"></a></span>
+<span id="cb21-22"><a href="mrp-intro.html#cb21-22" aria-hidden="true"></a>state_df<span class="op">$</span>state =<span class="st"> </span><span class="kw">fct_reorder</span>(state_df<span class="op">$</span>state, statepred_df<span class="op">$</span>repvote)  <span class="co"># order L-R == voteshare GOP</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="mrp-intro.html#cb22-1" aria-hidden="true"></a><span class="co"># The matrix P and the poststratification table contain 12,000 rows.</span></span>
+<span id="cb22-2"><a href="mrp-intro.html#cb22-2" aria-hidden="true"></a><span class="co"># Loop over state ID, fill in postrat cells for that state.</span></span>
+<span id="cb22-3"><a href="mrp-intro.html#cb22-3" aria-hidden="true"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(postrat_df<span class="op">$</span>state))) {</span>
+<span id="cb22-4"><a href="mrp-intro.html#cb22-4" aria-hidden="true"></a>  filtering_condition &lt;-<span class="st"> </span><span class="kw">which</span>(postrat_df<span class="op">$</span>state <span class="op">==</span><span class="st"> </span>state_df<span class="op">$</span>state[i])</span>
+<span id="cb22-5"><a href="mrp-intro.html#cb22-5" aria-hidden="true"></a></span>
+<span id="cb22-6"><a href="mrp-intro.html#cb22-6" aria-hidden="true"></a>  P_filtered &lt;-<span class="st"> </span>epred_mat[ ,filtering_condition]</span>
+<span id="cb22-7"><a href="mrp-intro.html#cb22-7" aria-hidden="true"></a>  k_filtered &lt;-<span class="st"> </span>postrat_df[filtering_condition, ]<span class="op">$</span>n</span>
+<span id="cb22-8"><a href="mrp-intro.html#cb22-8" aria-hidden="true"></a></span>
+<span id="cb22-9"><a href="mrp-intro.html#cb22-9" aria-hidden="true"></a>  <span class="co"># Poststratification step</span></span>
+<span id="cb22-10"><a href="mrp-intro.html#cb22-10" aria-hidden="true"></a>  poststrat_prob_state &lt;-<span class="st"> </span>P_filtered <span class="op">%*%</span><span class="st"> </span>k_filtered <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(k_filtered)</span>
+<span id="cb22-11"><a href="mrp-intro.html#cb22-11" aria-hidden="true"></a>  </span>
+<span id="cb22-12"><a href="mrp-intro.html#cb22-12" aria-hidden="true"></a>  <span class="co"># This is the MRP estimate for the state</span></span>
+<span id="cb22-13"><a href="mrp-intro.html#cb22-13" aria-hidden="true"></a>  state_df<span class="op">$</span>mrp_state_support[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(poststrat_prob_state)</span>
+<span id="cb22-14"><a href="mrp-intro.html#cb22-14" aria-hidden="true"></a>  state_df<span class="op">$</span>mrp_state_sd[i] &lt;-<span class="st"> </span><span class="kw">sd</span>(poststrat_prob_state)</span>
+<span id="cb22-15"><a href="mrp-intro.html#cb22-15" aria-hidden="true"></a>  </span>
+<span id="cb22-16"><a href="mrp-intro.html#cb22-16" aria-hidden="true"></a>  <span class="co"># This is the 10,000 sample survey estimate for the state, this time filtering df</span></span>
+<span id="cb22-17"><a href="mrp-intro.html#cb22-17" aria-hidden="true"></a>  state_df<span class="op">$</span>sample_state_support[i] &lt;-<span class="st"> </span><span class="kw">mean</span>(q_abort_10K_df<span class="op">$</span>abortion[q_abort_10K_df<span class="op">$</span>state <span class="op">==</span><span class="st"> </span>state_ab[i]])</span>
+<span id="cb22-18"><a href="mrp-intro.html#cb22-18" aria-hidden="true"></a>  </span>
+<span id="cb22-19"><a href="mrp-intro.html#cb22-19" aria-hidden="true"></a>  <span class="co"># This is the 60000-person survey estimate for the state</span></span>
+<span id="cb22-20"><a href="mrp-intro.html#cb22-20" aria-hidden="true"></a>  state_df<span class="op">$</span>all_state_support[i] &lt;-<span class="st"> </span>state_estimates_all<span class="op">$</span>estimate[state_estimates_all<span class="op">$</span>statename <span class="op">==</span><span class="st"> </span>state_ab[i]]</span>
+<span id="cb22-21"><a href="mrp-intro.html#cb22-21" aria-hidden="true"></a>  </span>
+<span id="cb22-22"><a href="mrp-intro.html#cb22-22" aria-hidden="true"></a>  <span class="co"># Sample size in state i for the 10,000 sample survey</span></span>
+<span id="cb22-23"><a href="mrp-intro.html#cb22-23" aria-hidden="true"></a>  state_df<span class="op">$</span>N[i] &lt;-<span class="st"> </span><span class="kw">nrow</span>(q_abort_10K_df[q_abort_10K_df<span class="op">$</span>state <span class="op">==</span><span class="st"> </span>state_ab[i], ])</span>
+<span id="cb22-24"><a href="mrp-intro.html#cb22-24" aria-hidden="true"></a>  </span>
+<span id="cb22-25"><a href="mrp-intro.html#cb22-25" aria-hidden="true"></a>  <span class="co"># Sample size in state i for the full 60,000 survey</span></span>
+<span id="cb22-26"><a href="mrp-intro.html#cb22-26" aria-hidden="true"></a>  state_df<span class="op">$</span>N_all[i] &lt;-<span class="st"> </span>state_n_all<span class="op">$</span>N_all[state_n_all<span class="op">$</span>state<span class="op">==</span>state_ab[i]]</span>
+<span id="cb22-27"><a href="mrp-intro.html#cb22-27" aria-hidden="true"></a>}</span></code></pre></div>
+<p>We start by plotting the estimates by state from the unadjusted 10,000-person sample. Again, the states are ordered by Republican vote in the 2016 election, and therefore we expect that statement support will follow an increasing trend.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-28-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>In states with small samples, we see considerably wide 95% confidence intervals. We can add the MRP-adjusted estimates to this plot.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-29-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>In general, MRP produces less extreme values by partially pooling information across the factor levels. To illustrate this, we can compare the sample and MRP estimates with the results form the full 60,000-respondent CCES. Of course, in any applied situation we would be using the full survey, but as we took a 10,000 person sample the full 60,000-respondent survey serves as a reference point.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-30-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>Overall, the MRP estimates are closer to the full survey estimates. This is particularly clear for the states with a smaller sample size.</p>
+<p>As a final way of presenting the MRP estimates, we can plot them on a US map. The symmetric color range goes from 10% to 90% support, as this scale allows for comparison with the other maps. However, the MRP estimates for statement support are concentrated in a relatively small range, which makes the colors appear muted.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-31-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<div id="estimation-for-subgroups-within-sub-national-units" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Estimation for subgroups within sub-national units</h3>
+<p>MRP can also be used to obtain estimates for more complex cases, such as subgroups within states. For instance, we can study support for declining coverage of abortions by state and ethnicity within state. For clarity, we order the races according to their support for the statement.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-33-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>Similarly, we can look at the outcome in ethnicity-education subgroups by state.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-35-1.png" width="85%" /></p>
+</div>
+</div>
+<div id="adjusting-for-nonrepresentative-surveys" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Adjusting for Nonrepresentative Surveys</h2>
+<p>We have already introduced that MRP is an effective statistical adjustment method to correct for differences between the sample and target population for a set of key variables. We start this second example by obtaining an artificially nonrepresentative sample that gives more weight to respondents that are older, male, and from Republican states.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="mrp-intro.html#cb23-1" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1010</span>)</span>
+<span id="cb23-2"><a href="mrp-intro.html#cb23-2" aria-hidden="true"></a></span>
+<span id="cb23-3"><a href="mrp-intro.html#cb23-3" aria-hidden="true"></a><span class="co"># We add the state-level predictors to q_abort_df</span></span>
+<span id="cb23-4"><a href="mrp-intro.html#cb23-4" aria-hidden="true"></a>q_abort_df &lt;-<span class="st"> </span><span class="kw">left_join</span>(q_abort_df, statepred_df, <span class="dt">by =</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb23-5"><a href="mrp-intro.html#cb23-5" aria-hidden="true"></a></span>
+<span id="cb23-6"><a href="mrp-intro.html#cb23-6" aria-hidden="true"></a><span class="co"># We take a sample from q_abort_df giving extra weight to respondents that are older, male, white, and from Republican states.</span></span>
+<span id="cb23-7"><a href="mrp-intro.html#cb23-7" aria-hidden="true"></a>extra_wt_df &lt;-<span class="st"> </span>q_abort_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">sample_n</span>(<span class="dv">5000</span>, <span class="dt">weight =</span> <span class="kw">I</span>(<span class="dv">5</span><span class="op">*</span>repvote <span class="op">+</span><span class="st"> </span>(age<span class="op">==</span><span class="st">&quot;18-29&quot;</span>)<span class="op">*</span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span>(age<span class="op">==</span><span class="st">&quot;30-39&quot;</span>)<span class="op">*</span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb23-8"><a href="mrp-intro.html#cb23-8" aria-hidden="true"></a><span class="st">                                           </span>(age<span class="op">==</span><span class="st">&quot;40-49&quot;</span>)<span class="op">*</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>(age<span class="op">==</span><span class="st">&quot;50-59&quot;</span>)<span class="op">*</span><span class="dv">4</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb23-9"><a href="mrp-intro.html#cb23-9" aria-hidden="true"></a><span class="st">                                           </span>(age<span class="op">==</span><span class="st">&quot;60-69&quot;</span>)<span class="op">*</span><span class="dv">6</span> <span class="op">+</span><span class="st"> </span>(age<span class="op">==</span><span class="st">&quot;70+&quot;</span>)<span class="op">*</span><span class="dv">8</span> <span class="op">+</span><span class="st"> </span>(male<span class="op">==</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">20</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb23-10"><a href="mrp-intro.html#cb23-10" aria-hidden="true"></a><span class="st">                                           </span>(eth<span class="op">==</span><span class="st">&quot;White&quot;</span>)<span class="op">*</span><span class="fl">1.05</span>))</span></code></pre></div>
+<p>The following plots show how this reweighted sample differs from the population.
+Now there is a strong age trend in the sample, not present in the population; compare this plot
+to the earlier plots in the <a href="survey-and-population-datasets.html#explore-data">exploratory data analysis</a> section.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-37-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-38-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>As before, we fit the model to the data.</p>
+<p>Next we poststratify to the state level, as in the [previous section](#postrat-state}.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="mrp-intro.html#cb24-1" aria-hidden="true"></a>epred2_mat &lt;-<span class="st"> </span><span class="kw">posterior_epred</span>(fit2, <span class="dt">newdata =</span> postrat_df, <span class="dt">draws =</span> <span class="dv">100</span>)</span>
+<span id="cb24-2"><a href="mrp-intro.html#cb24-2" aria-hidden="true"></a>epred2_vec &lt;-<span class="st"> </span>epred2_mat <span class="op">%*%</span><span class="st"> </span>postrat_df<span class="op">$</span>n <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(postrat_df<span class="op">$</span>n)</span>
+<span id="cb24-3"><a href="mrp-intro.html#cb24-3" aria-hidden="true"></a>theta2_mrp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(epred2_vec), <span class="dt">sd =</span> <span class="kw">sd</span>(epred2_vec))</span>
+<span id="cb24-4"><a href="mrp-intro.html#cb24-4" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;MRP estimates: &quot;</span>, <span class="kw">round</span>(theta2_mrp, <span class="dv">2</span>), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>MRP estimates:  0.44 0.01 </code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="mrp-intro.html#cb26-1" aria-hidden="true"></a>extra_wt_popn_support &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">mean =</span> <span class="kw">mean</span>(extra_wt_df<span class="op">$</span>abortion), <span class="dt">se =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>(extra_wt_df<span class="op">$</span>abortion)<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span><span class="kw">mean</span>(extra_wt_df<span class="op">$</span>abortion))<span class="op">/</span><span class="kw">nrow</span>(extra_wt_df)))</span>
+<span id="cb26-2"><a href="mrp-intro.html#cb26-2" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Extra-weight survey estimate: &quot;</span>, <span class="kw">round</span>(extra_wt_popn_support, <span class="dv">2</span>), <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>Extra-weight survey estimate:  0.46 0.01 </code></pre>
+<p>The nonrepresentative sample produces estimates that are differnt from those obtained from a random subsample of the survey in the previous section.</p>
+<p>We plot the estimates by state from the extra-weighted sample. Again, the states are ordered by Republican vote in the 2016 election, and therefore we expect that statement support will follow an increasing trend.
+MRP seems to partially correct for the nonrepresentative sample,
+furthermore, the MRP national and sub-national estimates based on the nonrepresentative sample are, overall, much closer to the 60,000-person survey than the biased unadjusted sample estimates.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-42-1.png" width="85%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="practical-considerations" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Practical Considerations</h2>
+<div id="census-incompletness-and-uncertainty" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Census incompletness and uncertainty</h3>
+<p>There are two main problems we can encounter when dealing with census data.</p>
+<ul>
+<li><p>It is possible that some variables that we may want to use for poststratification are not available. For instance, party ID is not registered in the US census and ethnicity is not registered in the French census. This additional information can be included in the poststratification table based on other (generally smaller) surveys that contain these variables.</p></li>
+<li><p>A great number of factors may require a large poststratification table, which in turn can result in unreliable census estimates. The American Community Survey we use in this case study does not only provide estimates of the actual figures that would have been obtained if the entire population was sampled, it also includes a measure of uncertainty around these estimates. Ideally, this uncertainty should be taken into account in the poststratification. For simplicity, this introduction has skipped this step, but this could mean the MRP-based estimates present an underestimated uncertainty.</p></li>
+</ul>
+</div>
+<div id="nonreponse-and-missing-data" class="section level3" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Nonreponse and missing data</h3>
+<p>We have seen that MRP is a method that can mitigate potential biases in the sample, but it is not a substitute for a better data collection effort that tries to minimize systematic nonresponse patterns.</p>
+</div>
+<div id="model-complexity" class="section level3" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Model complexity</h3>
+<p>MRP depends upon the use of a regularized model (i.e. that prevents overfitting by controlling its complexity). Different approaches can be used for this goal (e.g. non-multilevel regression, random forests, or a neural network; see <span class="citation">Bisbee (<a href="#ref-bisbee2019barp" role="doc-biblioref">2019</a>)</span> for an implementation that uses Bayesian Additive Regression Trees), but there are several advantages of using a Bayesian multilevel model. First, the multilevel structure allows for partially pooling information across different levels of a factor, which can be crucial when dealing with certain levels with few samples. Second, the Bayesian approach propagates uncertainty across the modeling, and thus gives more realistic confidence intervals.</p>
+<p>Apart from selecting the factors included in the poststratification table, there are several decisions the modeler should make. As we have already mentioned, adding relevant state-level predictors to the model often improves results, particularly when we have few data about some states. The inclusion of interactions can also be benefitial, especially when studying subgroups within subgroups (e.g. demographic subgroups within states; <span class="citation">Ghitza and Gelman (<a href="#ref-ghitza2013deep" role="doc-biblioref">2013</a>)</span>). Lastly, the use of structured priors can also serve to reduce both bias and variance by sharing information across the levels of a factor (<span class="citation">Gao et al. (<a href="#ref-gao2020structuredpriors" role="doc-biblioref">2020</a>)</span>).</p>
+</div>
+<div id="empty-cells-in-the-poststratification-table" class="section level3" number="2.5.4">
+<h3><span class="header-section-number">2.5.4</span> Empty cells in the poststratification table</h3>
+<p>It is very frequent that some of the cells in the poststratification table are empty, meaning that there are not anyone that fulfills some specific combination of factors. For instance, in a small state there can be no people younger than 30, without a high school degree, and earning more than $500,000 a year. In our example, we made sure that all the cells in the poststratification table were present even if the weight of that cell was zero, but this was only for illustrative purposes.</p>
+</div>
+<div id="subnational-units-not-represented-in-the-survey" class="section level3" number="2.5.5">
+<h3><span class="header-section-number">2.5.5</span> Subnational units not represented in the survey</h3>
+<p>It is fairly common for small-sample surveys not to include anyone from a particular subnational unit. For instance, a small national survey in the US may not include any participant from Wyoming. An important advantage of MRP is that we can still produce estimates for this state using the information from the participants in other states. Going back to the first parametrization of the multilevel model that we presented, <span class="math inline">\(\alpha^{\rm state}_{\rm s = Wyoming}\)</span> will be calculated based on the region and Republican voteshare of the 2016 – even in the abscence of information about the effect of residing in Wyoming specifically. As we have already explained, including subnational-level predictors is always recommended, particularly considering that data at the subnational level is easy to obtain in many cases. However, when dealing with subnational units that are not represented in our survey these predictors become even more central, as they are able to capture structured differences among the states and therefore allow for more precise estimation in the missing subnational areas.</p>
+</div>
+<div id="computational-issues" class="section level3" number="2.5.6">
+<h3><span class="header-section-number">2.5.6</span> Computational issues</h3>
+<p>Stan uses Hamiltonian Monte Carlo to explore the posterior distribution. In some cases, the geometry of the posterior distribution is too complex, making the Hamiltonian Monte Carlo “diverge”. This produces a warning indicating the presence of divergent transitions after warmup, something that implies the model could present biased estimates (see <span class="citation">Betancourt (<a href="#ref-betancourt2017hmc" role="doc-biblioref">2017</a>)</span> for more details). Usually, a few divergent transitions do not indicate a serious problem. There are, in any case, three potential solutions to this problem that do not involve reformulating the model: (i) a non-centered parametization; (ii) increasing the <code>adapt_delta</code> parameter; and (iii) including stronger priors. Fortunately we don’t have to worry about (i), as <code>rstanarm</code> already provides a non-centered parametization for the model. Therefore, we can focus on the other two.</p>
+<ol style="list-style-type: decimal">
+<li><p>Exploring the posterior distribution is somewhat similar as cartographing a mountainous terrain, and a divergent transition is similar to falling down a very steep slope, with the consequence of not being able to correctly map that area. In this analogy, what the cartographer could do is moving through the steep slope giving smaller steps to avoid falling. In Stan, the step size is set up automatically, but we can change a parameter called <code>adapt_delta</code> that controls the step size. By default we have that <code>adapt_delta = .95</code>, but we can increase that number to make Stan take smaller steps, which should reduce the number of divergent transitions. The maximum value we can set for <code>adapt_delta</code> is close (but necessarely less than) 1, with the downside that an increase implies a somewhat slower exploration of the posterior distribution. Usually, an <code>adapt_delta = 0.99</code> works well if we only have a few divergent transitions.</p></li>
+<li><p>However, there are cases in which increasing <code>adapt_delta</code> is not sufficient, and divergent transitions still occur. In this case, introducing weakly informative priors can be extremelly helpful. Although <code>rstanarm</code> provides by default weakly informative priors, in most applications these tend to be too weak. By using more reasonable priors, we make the posterior distribution easier to explore.</p>
+<ul>
+<li>The priors for the scaled coefficients are <span class="math inline">\({\rm Normal}(0, 2.5)\)</span>. When the coefficients are not scaled, <code>rstanarm</code> will automatically adjust the scaling of the priors as detailed in the <a href="https://cran.r-project.org/web/packages/rstanarm/vignettes/priors.html">prior vignette</a>. In most cases, and particularly when we find computational issues, it is reasonable to give stronger priors on the scaled coefficients such as <span class="math inline">\({\rm Normal}(0, 1)\)</span>.</li>
+<li>Multilevel models with multiple group-level standard deviation parameters (e.g. <span class="math inline">\(\sigma^{\rm age}\)</span>, <span class="math inline">\(\sigma^{\rm eth}\)</span>, <span class="math inline">\(\sigma^{\rm educ.eth}\)</span>, etc.) tend to be hard to estimate and sometimes present serious computational issues. The default prior for the covariance matrix is <code>decov(reg. = 1, conc. = 1, shape = 1, scale = 1)</code>. However, in a varying-intercept model such as this one (i.e. with structure <code>(1 | a) + (1 | b) + ... + (1 | n)</code>) the group-level standard deviations are independent of each other, and therefore the prior is simply a gamma distribution with some shape and scale. Consequently, <code>decov(shape = 1, scale = 1)</code> implies a weakly informative prior <span class="math inline">\({\rm Gamma(shape = 1, scale = 1)} = {\rm Exponential(scale = 1)}\)</span> on each group-level standard deviation. This is too weak in most situations, and using something like <span class="math inline">\({\rm Exponential(scale = 0.5)}\)</span> can be crucial for stabilizing computation.</li>
+</ul></li>
+</ol>
+<p>Therefore, something like this has much fewer chances of running into computational issues than simply leaving the defaults:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="mrp-intro.html#cb28-1" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">stan_glmer</span>(abortion <span class="op">~</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>state) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>eth) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>educ) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>age) <span class="op">+</span><span class="st"> </span>male <span class="op">+</span><span class="st"> </span></span>
+<span id="cb28-2"><a href="mrp-intro.html#cb28-2" aria-hidden="true"></a><span class="st">                    </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>male<span class="op">:</span>eth) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>educ<span class="op">:</span>age) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>educ<span class="op">:</span>eth) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb28-3"><a href="mrp-intro.html#cb28-3" aria-hidden="true"></a><span class="st">                    </span>repvote <span class="op">+</span><span class="st"> </span><span class="kw">factor</span>(region),</span>
+<span id="cb28-4"><a href="mrp-intro.html#cb28-4" aria-hidden="true"></a>  <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>),</span>
+<span id="cb28-5"><a href="mrp-intro.html#cb28-5" aria-hidden="true"></a>  <span class="dt">data =</span> df,</span>
+<span id="cb28-6"><a href="mrp-intro.html#cb28-6" aria-hidden="true"></a>  <span class="dt">prior =</span> <span class="kw">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dt">autoscale =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb28-7"><a href="mrp-intro.html#cb28-7" aria-hidden="true"></a>  <span class="dt">prior_covariance =</span> <span class="kw">decov</span>(<span class="dt">scale =</span> <span class="fl">0.50</span>),</span>
+<span id="cb28-8"><a href="mrp-intro.html#cb28-8" aria-hidden="true"></a>  <span class="dt">adapt_delta =</span> <span class="fl">0.99</span>,</span>
+<span id="cb28-9"><a href="mrp-intro.html#cb28-9" aria-hidden="true"></a>  <span class="dt">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb28-10"><a href="mrp-intro.html#cb28-10" aria-hidden="true"></a>  <span class="dt">seed =</span> <span class="dv">1010</span>)</span></code></pre></div>
+<p>More details about divergent transitions can be found in the <a href="https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup">Brief Guide to Stan’s Warnings</a> and in the <a href="https://mc-stan.org/docs/2_24/reference-manual/divergent-transitions.html">Stan Reference Manual</a>. More information and references about priors can be found in the <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior Choice Recommendations Wiki</a>.</p>
+
+<div id="refs" class="references hanging-indent">
+<div>
+<p>Betancourt, Michael. 2017. “A Conceptual Introduction to Hamiltonian Monte Carlo.” <em>arXiv Preprint arXiv:1701.02434</em>.</p>
+</div>
+<div>
+<p>Bisbee, James. 2019. “BARP: Improving Mister P Using Bayesian Additive Regression Trees.” <em>American Political Science Review</em> 113 (4): 1060–5.</p>
+</div>
+<div>
+<p>Buttice, Matthew K, and Benjamin Highton. 2013. “How Does Multilevel Regression and Poststratification Perform with Conventional National Surveys?” <em>Political Analysis</em> 21 (4).</p>
+</div>
+<div>
+<p>Downes, Marnie, Lyle C Gurrin, Dallas R English, Jane Pirkis, Dianne Currier, Matthew J Spittal, and John B Carlin. 2018. “Multilevel Regression and Poststratification: A Modeling Approach to Estimating Population Quantities from Highly Selected Survey Samples.” <em>American Journal of Epidemiology</em> 187 (8): 1780–90.</p>
+</div>
+<div>
+<p>Gao, Yuxiang, Lauren Kennedy, Daniel Simpson, Andrew Gelman, and others. 2020. “Improving Multilevel Regression and Poststratification with Structured Priors.” <em>Bayesian Analysis</em>.</p>
+</div>
+<div>
+<p>Gelman, Andrew, and Jennifer Hill. 2007. <em>Data Analysis Using Regression and Multilevelhierarchical Models</em>. Vol. 1. Cambridge University Press New York, NY, USA.</p>
+</div>
+<div>
+<p>Gelman, Andrew, Jennifer Hill, and Aki Vehtari. 2020. <em>Regression and Other Stories</em>. Cambridge University Press.</p>
+</div>
+<div>
+<p>Ghitza, Yair, and Andrew Gelman. 2013. “Deep Interactions with Mrp: Election Turnout and Voting Patterns Among Small Electoral Subgroups.” <em>American Journal of Political Science</em> 57 (3): 762–76.</p>
+</div>
+<div>
+<p>Kiewiet de Jonge, Chad P, Gary Langer, and Sofi Sinozich. 2018. “Predicting State Presidential Election Results Using National Tracking Polls and Multilevel Regression with Poststratification (Mrp).” <em>Public Opinion Quarterly</em> 82 (3): 419–46.</p>
+</div>
+<div>
+<p>Lax, Jeffrey R, and Justin H Phillips. 2009a. “Gay Rights in the States: Public Opinion and Policy Responsiveness.” <em>American Political Science Review</em> 103 (3): 367–86.</p>
+</div>
+<div>
+<p>———. 2009b. “How Should We Estimate Public Opinion in the States?” <em>American Journal of Political Science</em> 53 (1): 107–21.</p>
+</div>
+<div>
+<p>Park, David K, Andrew Gelman, and Joseph Bafumi. 2004. “Bayesian Multilevel Estimation with Poststratification: State-Level Estimates from National Polls.” <em>Political Analysis</em> 12 (4): 375–85.</p>
+</div>
+<div>
+<p>Wang, Wei, David Rothschild, Sharad Goel, and Andrew Gelman. 2015. “Forecasting Elections with Non-Representative Polls.” <em>International Journal of Forecasting</em> 31 (3): 980–91.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-betancourt2017hmc">
+<p>Betancourt, Michael. 2017. “A Conceptual Introduction to Hamiltonian Monte Carlo.” <em>arXiv Preprint arXiv:1701.02434</em>.</p>
+</div>
+<div id="ref-bisbee2019barp">
+<p>Bisbee, James. 2019. “BARP: Improving Mister P Using Bayesian Additive Regression Trees.” <em>American Political Science Review</em> 113 (4): 1060–5.</p>
+</div>
+<div id="ref-gao2020structuredpriors">
+<p>Gao, Yuxiang, Lauren Kennedy, Daniel Simpson, Andrew Gelman, and others. 2020. “Improving Multilevel Regression and Poststratification with Structured Priors.” <em>Bayesian Analysis</em>.</p>
+</div>
+<div id="ref-gelman2007data">
+<p>Gelman, Andrew, and Jennifer Hill. 2007. <em>Data Analysis Using Regression and Multilevelhierarchical Models</em>. Vol. 1. Cambridge University Press New York, NY, USA.</p>
+</div>
+<div id="ref-gelman2020raos">
+<p>Gelman, Andrew, Jennifer Hill, and Aki Vehtari. 2020. <em>Regression and Other Stories</em>. Cambridge University Press.</p>
+</div>
+<div id="ref-ghitza2013deep">
+<p>Ghitza, Yair, and Andrew Gelman. 2013. “Deep Interactions with Mrp: Election Turnout and Voting Patterns Among Small Electoral Subgroups.” <em>American Journal of Political Science</em> 57 (3): 762–76.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="survey-and-population-datasets.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

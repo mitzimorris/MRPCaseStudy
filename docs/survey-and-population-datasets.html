@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Survey and Population Datasets | Multilevel Regression and Poststratification Case Studies</title>
+  <meta name="description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Survey and Population Datasets | Multilevel Regression and Poststratification Case Studies" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Survey and Population Datasets | Multilevel Regression and Poststratification Case Studies" />
+  
+  <meta name="twitter:description" content="Introduction to Bayesian Multilevel Modeling and Poststratification using rstanarm, brms, and Stan" />
+  
+
+<meta name="author" content="Juan Lopez-Martin, Justin H. Phillips, and Andrew Gelman" />
+
+
+<meta name="date" content="2020-12-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="mrp-intro.html"/>
+<script src="libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">MRP Case Studies</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a></li>
+<li class="chapter" data-level="1" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html"><i class="fa fa-check"></i><b>1</b> Survey and Population Datasets</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#survey-data"><i class="fa fa-check"></i><b>1.1</b> Survey Data</a></li>
+<li class="chapter" data-level="1.2" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#pop-data"><i class="fa fa-check"></i><b>1.2</b> Population Data</a></li>
+<li class="chapter" data-level="1.3" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#multilevel-model-group-level-predictors"><i class="fa fa-check"></i><b>1.3</b> Multilevel Model Group-level Predictors</a></li>
+<li class="chapter" data-level="1.4" data-path="survey-and-population-datasets.html"><a href="survey-and-population-datasets.html#explore-data"><i class="fa fa-check"></i><b>1.4</b> Exploratory Data Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="mrp-intro.html"><a href="mrp-intro.html"><i class="fa fa-check"></i><b>2</b> Introduction to Multilevel Modeling and Poststratification (MRP)</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="mrp-intro.html"><a href="mrp-intro.html#first-stage-estimating-the-individual-response-model"><i class="fa fa-check"></i><b>2.1</b> First stage: Estimating the Individual-Response Model</a></li>
+<li class="chapter" data-level="2.2" data-path="mrp-intro.html"><a href="mrp-intro.html#second-stage-poststratification"><i class="fa fa-check"></i><b>2.2</b> Second Stage: Poststratification</a></li>
+<li class="chapter" data-level="2.3" data-path="mrp-intro.html"><a href="mrp-intro.html#postrat-state"><i class="fa fa-check"></i><b>2.3</b> MRP for Small Area Estimation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="mrp-intro.html"><a href="mrp-intro.html#estimation-for-subgroups-within-sub-national-units"><i class="fa fa-check"></i><b>2.3.1</b> Estimation for subgroups within sub-national units</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="mrp-intro.html"><a href="mrp-intro.html#adjusting-for-nonrepresentative-surveys"><i class="fa fa-check"></i><b>2.4</b> Adjusting for Nonrepresentative Surveys</a></li>
+<li class="chapter" data-level="2.5" data-path="mrp-intro.html"><a href="mrp-intro.html#practical-considerations"><i class="fa fa-check"></i><b>2.5</b> Practical Considerations</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="mrp-intro.html"><a href="mrp-intro.html#census-incompletness-and-uncertainty"><i class="fa fa-check"></i><b>2.5.1</b> Census incompletness and uncertainty</a></li>
+<li class="chapter" data-level="2.5.2" data-path="mrp-intro.html"><a href="mrp-intro.html#nonreponse-and-missing-data"><i class="fa fa-check"></i><b>2.5.2</b> Nonreponse and missing data</a></li>
+<li class="chapter" data-level="2.5.3" data-path="mrp-intro.html"><a href="mrp-intro.html#model-complexity"><i class="fa fa-check"></i><b>2.5.3</b> Model complexity</a></li>
+<li class="chapter" data-level="2.5.4" data-path="mrp-intro.html"><a href="mrp-intro.html#empty-cells-in-the-poststratification-table"><i class="fa fa-check"></i><b>2.5.4</b> Empty cells in the poststratification table</a></li>
+<li class="chapter" data-level="2.5.5" data-path="mrp-intro.html"><a href="mrp-intro.html#subnational-units-not-represented-in-the-survey"><i class="fa fa-check"></i><b>2.5.5</b> Subnational units not represented in the survey</a></li>
+<li class="chapter" data-level="2.5.6" data-path="mrp-intro.html"><a href="mrp-intro.html#computational-issues"><i class="fa fa-check"></i><b>2.5.6</b> Computational issues</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Multilevel Regression and Poststratification Case Studies</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="survey-and-population-datasets" class="section level1" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Survey and Population Datasets</h1>
+<p>In these case studies we use
+the 2018 Cooperative Congressional Election Study (CCES), a US nationwide survey designed by a consortium of 60 research teams and administered by YouGov
+as our source of public opinion data, and
+the 2014-2018 American Community Survey (ACS), a set of yearly surveys conducted by the US Census,
+as our source of public opinion data.</p>
+<div id="survey-data" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Survey Data</h2>
+<p>The 2018 CCES raw survey data can be downloaded from the <a href="https://dataverse.harvard.edu">CCES Dataverse</a>
+via the link: <a href="https://dataverse.harvard.edu/api/access/datafile/3588803?format=original&amp;gbrecs=true">https://dataverse.harvard.edu/api/access/datafile/3588803?format=original&amp;gbrecs=true</a>;
+by default the downloaded filename is called <code>cces18_common_vv.csv</code>.
+The outcome of interest that we will use for this introduction is required abortion coverage by workplace insurance:</p>
+<blockquote>
+<p>Allow employers to decline coverage of abortions in insurance plans (Support / Oppose)</p>
+</blockquote>
+<p>Survey data must include some respondent demographic information and some type of geographic indicator (e.g. state, congressional district).
+Apart from the outcome measure, we will consider a set of factors to define the geographic-demographic subgroups. Even though some of these variables may be continous (e.g. age, income), we must make sure to split them into intervals to create a factor with different levels. Importantly, and as we will see in a moment, these factors and their corresponding levels need to match the ones in the postratification table. In this case, we will use the following demographic-geographic factors with the indicated levels:</p>
+<ul>
+<li>State: 50 US states (<span class="math inline">\(S = 50\)</span>).</li>
+<li>Sex: Female, Male (<span class="math inline">\(G = 2\)</span>).</li>
+<li>Age: 18-29, 30-39, 40-49, 50-59, 60-69, 70+ (<span class="math inline">\(A = 6\)</span>).</li>
+<li>Ethnicity: (Non-hispanic) White, Black, Hispanic, Other (which also includes Mixed) (<span class="math inline">\(R = 4\)</span>).</li>
+<li>Education: No HS, HS, Some college, 4-year college, Post-grad (<span class="math inline">\(E = 5\)</span>).</li>
+</ul>
+<p>Every MRP study requires some degree of data wrangling in order to make the factors in the survey of interest match the factors available in census data and other population-level surveys and census. Here we use the <a href="https://www.tidyverse.org/">R Tidyverse</a> to process the survey data so that it aligns with the postratification table. Because initial recoding errors are fatal, it is important to check that each step of the recoding process produces expected results, either by viewing or summarizing the data. Because the data is all tabular data, we use the utility function <a href="https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/head"><code>head</code></a> to inspect the first few lines of a dataframe before and after each operation.</p>
+<p>First, we examine the contents of the data as downloaded, looking only at those columns which provide the above demographic-geographic information which are labeled <code>inputstate</code>, <code>gender</code>, <code>birthyr</code>, <code>race</code>, <code>educ</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="survey-and-population-datasets.html#cb1-1" aria-hidden="true"></a>cces18_df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;cces18_common_vv.csv&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">inputstate</th>
+<th align="right">gender</th>
+<th align="right">birthyr</th>
+<th align="right">race</th>
+<th align="right">educ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">2</td>
+<td align="right">1964</td>
+<td align="right">5</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="right">47</td>
+<td align="right">2</td>
+<td align="right">1971</td>
+<td align="right">1</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">39</td>
+<td align="right">2</td>
+<td align="right">1958</td>
+<td align="right">1</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">1946</td>
+<td align="right">4</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="right">21</td>
+<td align="right">2</td>
+<td align="right">1972</td>
+<td align="right">1</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1995</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>The demographics for the survery must match the demographics in the population data.
+If there is not a direct one-to-one relationship between the survey and the population data,
+the survey data must be recoded until a clean mapping exists.
+For example, the CCES includes ‘Middle Eastern’ as an option for ethnicity, but this distinction is not available
+in the post-stratification data, which comes from the the 2014-2018 American Community Survey (ACS), a set of yearly surveys conducted by the US Census.
+Therefore, people who identified as ‘Middle Eastern’ in the CCES need to be recoded as ‘Other’.</p>
+<p>We write R functions to encapsulate the recoding steps.
+Both the CCES survey and the US Census data use numeric <a href="https://transition.fcc.gov/oet/info/maps/census/fips/fips.txt">FIPS codes</a> to record state information.
+We can use R factors to map FIPS codes to the standard two-letter state name abbreviations.
+Because both surveys use this encoding, we make this into a reusbale function <code>recode_fips</code>.
+The function <code>recode_cces</code> recodes the survey.
+To facilitate the post-stratification process, where we use the tidyverse to join by column name, it adds columns to the survey data frame whose name
+matches the columns in the population data. If both datasets have matching column names, we rewrite the column data as needed.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="survey-and-population-datasets.html#cb2-1" aria-hidden="true"></a>state_ab &lt;-<span class="st"> </span>datasets<span class="op">::</span>state.abb</span>
+<span id="cb2-2"><a href="survey-and-population-datasets.html#cb2-2" aria-hidden="true"></a>state_fips &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">15</span>,<span class="dv">16</span>,<span class="dv">17</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">21</span>,<span class="dv">22</span>,<span class="dv">23</span>,<span class="dv">24</span>,</span>
+<span id="cb2-3"><a href="survey-and-population-datasets.html#cb2-3" aria-hidden="true"></a>                <span class="dv">25</span>,<span class="dv">26</span>,<span class="dv">27</span>,<span class="dv">28</span>,<span class="dv">29</span>,<span class="dv">30</span>,<span class="dv">31</span>,<span class="dv">32</span>,<span class="dv">33</span>,<span class="dv">34</span>,<span class="dv">35</span>,<span class="dv">36</span>,<span class="dv">37</span>,<span class="dv">38</span>,<span class="dv">39</span>,<span class="dv">40</span>,<span class="dv">41</span>,<span class="dv">42</span>,</span>
+<span id="cb2-4"><a href="survey-and-population-datasets.html#cb2-4" aria-hidden="true"></a>                <span class="dv">44</span>,<span class="dv">45</span>,<span class="dv">46</span>,<span class="dv">47</span>,<span class="dv">48</span>,<span class="dv">49</span>,<span class="dv">50</span>,<span class="dv">51</span>,<span class="dv">53</span>,<span class="dv">54</span>,<span class="dv">55</span>,<span class="dv">56</span>)</span>
+<span id="cb2-5"><a href="survey-and-population-datasets.html#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="survey-and-population-datasets.html#cb2-6" aria-hidden="true"></a><span class="co"># recode_fips</span></span>
+<span id="cb2-7"><a href="survey-and-population-datasets.html#cb2-7" aria-hidden="true"></a><span class="co"># The US census and CCES data use FIPS codes to identify states.</span></span>
+<span id="cb2-8"><a href="survey-and-population-datasets.html#cb2-8" aria-hidden="true"></a><span class="co"># Use factors to map codes to 2-letter stats abbreviations.</span></span>
+<span id="cb2-9"><a href="survey-and-population-datasets.html#cb2-9" aria-hidden="true"></a><span class="co"># Because the FIPS codes include the district of Columbia and US territories</span></span>
+<span id="cb2-10"><a href="survey-and-population-datasets.html#cb2-10" aria-hidden="true"></a><span class="co"># there are some gaps in the numbering system.</span></span>
+<span id="cb2-11"><a href="survey-and-population-datasets.html#cb2-11" aria-hidden="true"></a>recode_fips &lt;-<span class="st"> </span><span class="cf">function</span>(df, column) {</span>
+<span id="cb2-12"><a href="survey-and-population-datasets.html#cb2-12" aria-hidden="true"></a>    <span class="kw">factor</span>(df[[column]], <span class="dt">levels =</span> state_fips, <span class="dt">labels =</span> state_ab)</span>
+<span id="cb2-13"><a href="survey-and-population-datasets.html#cb2-13" aria-hidden="true"></a>}</span>
+<span id="cb2-14"><a href="survey-and-population-datasets.html#cb2-14" aria-hidden="true"></a></span>
+<span id="cb2-15"><a href="survey-and-population-datasets.html#cb2-15" aria-hidden="true"></a><span class="co"># rewrite the CCES demographics needed for post-stratification</span></span>
+<span id="cb2-16"><a href="survey-and-population-datasets.html#cb2-16" aria-hidden="true"></a>recode_cces &lt;-<span class="st"> </span><span class="cf">function</span>(df) {</span>
+<span id="cb2-17"><a href="survey-and-population-datasets.html#cb2-17" aria-hidden="true"></a>    <span class="co">## State -- factor, labels state abb, levels FIPS code</span></span>
+<span id="cb2-18"><a href="survey-and-population-datasets.html#cb2-18" aria-hidden="true"></a>    df<span class="op">$</span>state &lt;-<span class="st"> </span><span class="kw">recode_fips</span>(df, <span class="st">&quot;inputstate&quot;</span>)</span>
+<span id="cb2-19"><a href="survey-and-population-datasets.html#cb2-19" aria-hidden="true"></a>    </span>
+<span id="cb2-20"><a href="survey-and-population-datasets.html#cb2-20" aria-hidden="true"></a>    <span class="co">## Gender -- dichotomous (coded as -0.5 Female, +0.5 Male)</span></span>
+<span id="cb2-21"><a href="survey-and-population-datasets.html#cb2-21" aria-hidden="true"></a>    df<span class="op">$</span>male &lt;-<span class="st"> </span><span class="kw">abs</span>(df<span class="op">$</span>gender<span class="dv">-2</span>)<span class="op">-</span><span class="fl">0.5</span></span>
+<span id="cb2-22"><a href="survey-and-population-datasets.html#cb2-22" aria-hidden="true"></a>    </span>
+<span id="cb2-23"><a href="survey-and-population-datasets.html#cb2-23" aria-hidden="true"></a>    <span class="co">## ethnicity -- factor</span></span>
+<span id="cb2-24"><a href="survey-and-population-datasets.html#cb2-24" aria-hidden="true"></a>    df<span class="op">$</span>eth &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>race, <span class="dt">levels =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>,</span>
+<span id="cb2-25"><a href="survey-and-population-datasets.html#cb2-25" aria-hidden="true"></a>                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;White&quot;</span>, <span class="st">&quot;Black&quot;</span>, <span class="st">&quot;Hispanic&quot;</span>, <span class="st">&quot;Asian&quot;</span>, <span class="st">&quot;Native American&quot;</span>, <span class="st">&quot;Mixed&quot;</span>, <span class="st">&quot;Other&quot;</span>, <span class="st">&quot;Middle Eastern&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb2-26"><a href="survey-and-population-datasets.html#cb2-26" aria-hidden="true"></a><span class="st">        </span><span class="kw">fct_collapse</span>(<span class="st">&quot;Other&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Asian&quot;</span>, <span class="st">&quot;Other&quot;</span>, <span class="st">&quot;Middle Eastern&quot;</span>, <span class="st">&quot;Mixed&quot;</span>, <span class="st">&quot;Native American&quot;</span>))</span>
+<span id="cb2-27"><a href="survey-and-population-datasets.html#cb2-27" aria-hidden="true"></a>    </span>
+<span id="cb2-28"><a href="survey-and-population-datasets.html#cb2-28" aria-hidden="true"></a>    <span class="co">## Age -- cut into factor</span></span>
+<span id="cb2-29"><a href="survey-and-population-datasets.html#cb2-29" aria-hidden="true"></a>    df<span class="op">$</span>age &lt;-<span class="st"> </span><span class="dv">2018</span> <span class="op">-</span><span class="st"> </span>df<span class="op">$</span>birthyr</span>
+<span id="cb2-30"><a href="survey-and-population-datasets.html#cb2-30" aria-hidden="true"></a>    df<span class="op">$</span>age &lt;-<span class="st"> </span><span class="kw">cut</span>(<span class="kw">as.integer</span>(df<span class="op">$</span>age), <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">29</span>, <span class="dv">39</span>, <span class="dv">49</span>, <span class="dv">59</span>, <span class="dv">69</span>, <span class="dv">120</span>), </span>
+<span id="cb2-31"><a href="survey-and-population-datasets.html#cb2-31" aria-hidden="true"></a>                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;18-29&quot;</span>,<span class="st">&quot;30-39&quot;</span>,<span class="st">&quot;40-49&quot;</span>,<span class="st">&quot;50-59&quot;</span>,<span class="st">&quot;60-69&quot;</span>,<span class="st">&quot;70+&quot;</span>),</span>
+<span id="cb2-32"><a href="survey-and-population-datasets.html#cb2-32" aria-hidden="true"></a>                  <span class="dt">ordered_result =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb2-33"><a href="survey-and-population-datasets.html#cb2-33" aria-hidden="true"></a>    </span>
+<span id="cb2-34"><a href="survey-and-population-datasets.html#cb2-34" aria-hidden="true"></a>    <span class="co">## Education -- factor</span></span>
+<span id="cb2-35"><a href="survey-and-population-datasets.html#cb2-35" aria-hidden="true"></a>    df<span class="op">$</span>educ &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">as.integer</span>(df<span class="op">$</span>educ), </span>
+<span id="cb2-36"><a href="survey-and-population-datasets.html#cb2-36" aria-hidden="true"></a>                      <span class="dt">levels =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, </span>
+<span id="cb2-37"><a href="survey-and-population-datasets.html#cb2-37" aria-hidden="true"></a>                      <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;No HS&quot;</span>, <span class="st">&quot;HS&quot;</span>, <span class="st">&quot;Some college&quot;</span>, <span class="st">&quot;Associates&quot;</span>, <span class="st">&quot;4-Year College&quot;</span>, <span class="st">&quot;Post-grad&quot;</span>), <span class="dt">ordered =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb2-38"><a href="survey-and-population-datasets.html#cb2-38" aria-hidden="true"></a><span class="st">        </span><span class="kw">fct_collapse</span>(<span class="st">&quot;Some college&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Some college&quot;</span>, <span class="st">&quot;Associates&quot;</span>))  </span>
+<span id="cb2-39"><a href="survey-and-population-datasets.html#cb2-39" aria-hidden="true"></a></span>
+<span id="cb2-40"><a href="survey-and-population-datasets.html#cb2-40" aria-hidden="true"></a>    <span class="kw">return</span>(df)</span>
+<span id="cb2-41"><a href="survey-and-population-datasets.html#cb2-41" aria-hidden="true"></a>}</span></code></pre></div>
+<p>We recode the CCES survey.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="survey-and-population-datasets.html#cb3-1" aria-hidden="true"></a>cces18_df &lt;-<span class="st"> </span><span class="kw">recode_cces</span>(cces18_df)</span></code></pre></div>
+<p>We check the recoding by viewing the recoded columns of interest.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="survey-and-population-datasets.html#cb4-1" aria-hidden="true"></a><span class="kw">head</span>(<span class="kw">select</span>(cces18_df, state, inputstate, male, gender, eth, race, age, birthyr, educ))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">state</th>
+<th align="right">inputstate</th>
+<th align="right">male</th>
+<th align="right">gender</th>
+<th align="left">eth</th>
+<th align="right">race</th>
+<th align="left">age</th>
+<th align="right">birthyr</th>
+<th align="left">educ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">MD</td>
+<td align="right">24</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">Other</td>
+<td align="right">5</td>
+<td align="left">50-59</td>
+<td align="right">1964</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="even">
+<td align="left">TN</td>
+<td align="right">47</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">White</td>
+<td align="right">1</td>
+<td align="left">40-49</td>
+<td align="right">1971</td>
+<td align="left">HS</td>
+</tr>
+<tr class="odd">
+<td align="left">OH</td>
+<td align="right">39</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">White</td>
+<td align="right">1</td>
+<td align="left">60-69</td>
+<td align="right">1958</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="even">
+<td align="left">CA</td>
+<td align="right">6</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">Other</td>
+<td align="right">4</td>
+<td align="left">70+</td>
+<td align="right">1946</td>
+<td align="left">Post-grad</td>
+</tr>
+<tr class="odd">
+<td align="left">KY</td>
+<td align="right">21</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">White</td>
+<td align="right">1</td>
+<td align="left">40-49</td>
+<td align="right">1972</td>
+<td align="left">HS</td>
+</tr>
+<tr class="even">
+<td align="left">AZ</td>
+<td align="right">4</td>
+<td align="right">-0.5</td>
+<td align="right">2</td>
+<td align="left">White</td>
+<td align="right">1</td>
+<td align="left">18-29</td>
+<td align="right">1995</td>
+<td align="left">No HS</td>
+</tr>
+</tbody>
+</table>
+<p>Next we get the outcome of interest: all responses to the above question on abortion, coded as “CC18_321d” in the CCES survey. As before, we encapsulate this in an R function which is just general enough to allow us to do the same analysis on any question in the CCES survey. This function drops non-response information; if this information is not missing at random, this introduces (more) bias into our survey.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="survey-and-population-datasets.html#cb5-1" aria-hidden="true"></a><span class="co"># Return dataframe containing question as 0,1 outcome</span></span>
+<span id="cb5-2"><a href="survey-and-population-datasets.html#cb5-2" aria-hidden="true"></a><span class="co"># and columns for demographic data used in the regression</span></span>
+<span id="cb5-3"><a href="survey-and-population-datasets.html#cb5-3" aria-hidden="true"></a>get_question &lt;-<span class="st"> </span><span class="cf">function</span>(df, question, label) {</span>
+<span id="cb5-4"><a href="survey-and-population-datasets.html#cb5-4" aria-hidden="true"></a>    df[[label]] &lt;-<span class="st"> </span><span class="kw">abs</span>(df[[question]]<span class="op">-</span><span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="survey-and-population-datasets.html#cb5-5" aria-hidden="true"></a>    <span class="co"># Clean and remove NAs</span></span>
+<span id="cb5-6"><a href="survey-and-population-datasets.html#cb5-6" aria-hidden="true"></a>    <span class="kw">select</span>(df, <span class="kw">all_of</span>(label), state, eth, male, age, educ) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>()</span>
+<span id="cb5-7"><a href="survey-and-population-datasets.html#cb5-7" aria-hidden="true"></a>}</span>
+<span id="cb5-8"><a href="survey-and-population-datasets.html#cb5-8" aria-hidden="true"></a></span>
+<span id="cb5-9"><a href="survey-and-population-datasets.html#cb5-9" aria-hidden="true"></a><span class="co"># Dataframe containing the outcome and predictors</span></span>
+<span id="cb5-10"><a href="survey-and-population-datasets.html#cb5-10" aria-hidden="true"></a>q_abort_df &lt;-<span class="st"> </span><span class="kw">get_question</span>(cces18_df, <span class="st">&quot;CC18_321d&quot;</span>, <span class="st">&quot;abortion&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">abortion</th>
+<th align="left">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">MD</td>
+<td align="left">Other</td>
+<td align="right">-0.5</td>
+<td align="left">50-59</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">TN</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">40-49</td>
+<td align="left">HS</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">OH</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">60-69</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">CA</td>
+<td align="left">Other</td>
+<td align="right">-0.5</td>
+<td align="left">70+</td>
+<td align="left">Post-grad</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">KY</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">40-49</td>
+<td align="left">HS</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">AZ</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">No HS</td>
+</tr>
+</tbody>
+</table>
+<p>The full 2018 CCES consist of almost 60,000 respondents. However, most studies work with a smaller national survey. To show how MRP works in these cases, we will take a random sample of 10,000 participants of the CCES and work with the sample instead of the full CCES. Obviously, in a more realistic setting we would always use all the data that we have available.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="survey-and-population-datasets.html#cb6-1" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1010</span>) <span class="co"># We set the seed to an arbitrary number for reproducibility.</span></span>
+<span id="cb6-2"><a href="survey-and-population-datasets.html#cb6-2" aria-hidden="true"></a>q_abort_10K_df &lt;-<span class="st"> </span>q_abort_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">sample_n</span>(<span class="dv">10000</span>) <span class="co"># name encodes the sample size.</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">abortion</th>
+<th align="left">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">WI</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">60-69</td>
+<td align="left">4-Year College</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">NJ</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">60-69</td>
+<td align="left">HS</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">FL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">40-49</td>
+<td align="left">HS</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">FL</td>
+<td align="left">White</td>
+<td align="right">0.5</td>
+<td align="left">70+</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">IL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">50-59</td>
+<td align="left">Some college</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">OK</td>
+<td align="left">Other</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Some college</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pop-data" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Population Data</h2>
+<p>Census data or other population surveys are used to build the poststratification table.
+This table reflects the number of people in the population of interest corresponding to each combination of the demographic-geographic factors.
+It is used in the second stage of MRP to poststratify the estimates obtained for each subgroup.
+Here we will use the 2014-2018 American Community Survey (ACS), a set of yearly surveys conducted by the US Census that provides estimates of the number of US residents as the source of out poststratification variables.
+The raw ACS survey datasets consist of rows of individual-level and household-level responses.
+These individual responses have been aggregated as counts per row of the poststratification table.
+See the appendix for dicussion of processing the ACS data.</p>
+<p>As specified above, the poststratification table has States Sex Age Ethnicity Education cells,
+thus the long form of this table has <span class="math inline">\(50 \times 2 \times 6 \times 4 \times 5 = 12,000\)</span> rows.
+There are more rows in the poststratification table than observed units in the CCES subsample,
+which necessarily implies that there are some combinations in the poststratification table that we don’t observe,
+and it is likely that there are some combinations which are not in the complete CCES survey.</p>
+<p>It is critical that the factors (and their levels) used in the survey match the factors obtained in the census.
+In principle, MRP is limited to use individual-level variables that are present both the survey and the census,
+although later in this case study we relax this requirement.
+For instance, the CCES includes information on respondent’s religion, but as this information is not available in the census we are not able to use this variable.
+Similarly, the levels of the factors in the census are required to match the ones in the census.
+For instance, the CCES includes ‘Middle Eastern’ as an option for ethnicity, but the ACS does not.
+Therefore, people who identified as ‘Middle Eastern’ in the CCES need to be included in the ‘Other’ category.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="survey-and-population-datasets.html#cb7-1" aria-hidden="true"></a>postrat_df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;postrat_data.csv&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">X</th>
+<th align="right">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">No HS</td>
+<td align="right">23948</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">HS</td>
+<td align="right">59378</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Some college</td>
+<td align="right">104855</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">4-Year College</td>
+<td align="right">37066</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Post-grad</td>
+<td align="right">9378</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">30-39</td>
+<td align="left">No HS</td>
+<td align="right">14303</td>
+</tr>
+</tbody>
+</table>
+<p>A quick check of the data shows that the ACS also uses FIPS codes. We recode this column and check our work.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="survey-and-population-datasets.html#cb8-1" aria-hidden="true"></a>postrat_df<span class="op">$</span>state &lt;-<span class="st"> </span><span class="kw">recode_fips</span>(postrat_df, <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">X</th>
+<th align="left">state</th>
+<th align="left">eth</th>
+<th align="right">male</th>
+<th align="left">age</th>
+<th align="left">educ</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">No HS</td>
+<td align="right">23948</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">HS</td>
+<td align="right">59378</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Some college</td>
+<td align="right">104855</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">4-Year College</td>
+<td align="right">37066</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">18-29</td>
+<td align="left">Post-grad</td>
+<td align="right">9378</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">AL</td>
+<td align="left">White</td>
+<td align="right">-0.5</td>
+<td align="left">30-39</td>
+<td align="left">No HS</td>
+<td align="right">14303</td>
+</tr>
+</tbody>
+</table>
+<p>Here we see that the first row in the poststratification table indicates that there are 23,948 Alabamians that are white, male, between 18 and 29 years old, and without a high school degree.</p>
+<p>Every MRP study requires some degree of data wrangling in order to make the factors in the survey of interest match the factors available in census data and other population-level surveys and census, which is why we have taken the time here to show the processing steps and to check our work at every step. The code provided in the Appendix shows how to get the ACS data and tabulate the post-stratification matrix.</p>
+</div>
+<div id="multilevel-model-group-level-predictors" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Multilevel Model Group-level Predictors</h2>
+<p>The individual-response model used in the first stage can include group-level predictors, which tend to reduce unexplained group level variation by accounting for structured differences among the states. For instance, most national-level surveys in the US tend to include many participants from a state such as New York, but few from a small state like Vermont. This can result in noisy estimates for the effect of being from Vermont. The intuition is that by including state-level predictors, such as the Republican voteshare in a previous election or the percentage of Evangelicals at each state, the model is able to account for how similar is Vermont is to New York and other populous states, and therefore to produce more precise estimates. These group-level predictors do not need to be available in the census nor they have to be converted to factors, and in many cases are readily available. A more detailed discussion on the importance of builidng a reasonable model for predicting opinion, and how state-level predictors can be a key element in this regard, can be found in <span class="citation">Lax and Phillips (<a href="#ref-lax2009states" role="doc-biblioref">2009</a><a href="#ref-lax2009states" role="doc-biblioref">b</a>)</span> and <span class="citation">Buttice and Highton (<a href="#ref-buttice2013mrp" role="doc-biblioref">2013</a>)</span>.</p>
+<p>In our example, we will include two state-level predictors: the geographical region (Northeast, North Central, South, and West) and the Republican vote share in the 2016 presidential election. The state-level data is in a CSV file included with this case study. In order to use this data in our analysis, the state column must be coded</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="survey-and-population-datasets.html#cb9-1" aria-hidden="true"></a>statepred_df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;statelevel_predictors.csv&#39;</span>, <span class="dt">stringsAsFactors=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">state</th>
+<th align="right">repvote</th>
+<th align="left">region</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AL</td>
+<td align="right">0.6437414</td>
+<td align="left">South</td>
+</tr>
+<tr class="even">
+<td align="left">AK</td>
+<td align="right">0.5838565</td>
+<td align="left">West</td>
+</tr>
+<tr class="odd">
+<td align="left">AZ</td>
+<td align="right">0.5189002</td>
+<td align="left">West</td>
+</tr>
+<tr class="even">
+<td align="left">AR</td>
+<td align="right">0.6428514</td>
+<td align="left">South</td>
+</tr>
+<tr class="odd">
+<td align="left">CA</td>
+<td align="right">0.3387179</td>
+<td align="left">West</td>
+</tr>
+<tr class="even">
+<td align="left">CO</td>
+<td align="right">0.4731667</td>
+<td align="left">West</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="explore-data" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Exploratory Data Analysis</h2>
+<p>In the previous steps we have obtained a 10,000-person sample from the CCES survey and also generated a poststratification table using census data. As a first exploratory step, we will check if the frequencies for the different levels for the factors considered in the CCES data are similar to the frequencies reported in the census. If this was not the case, we will start suspecting some degree of nonresponse bias in the CCES survey.</p>
+<p>For clarity, the levels in the plots follow their natural order in the case of age and education, ordering the others by the approximate proportion of Republican support.</p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-17-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p><img src="MRP-case-studies_files/figure-html/unnamed-chunk-18-1.png" width="85%" style="display: block; margin: auto;" /></p>
+<p>We see that our 10,000-participant CCES sample does not differ too much from the target population according to the American Community Survey. This should not be surprising, as the CCES intends to use a representative sample.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-buttice2013mrp">
+<p>Buttice, Matthew K, and Benjamin Highton. 2013. “How Does Multilevel Regression and Poststratification Perform with Conventional National Surveys?” <em>Political Analysis</em> 21 (4).</p>
+</div>
+<div id="ref-lax2009states">
+<p>Lax, Jeffrey R, and Justin H Phillips. 2009b. “How Should We Estimate Public Opinion in the States?” <em>American Journal of Political Science</em> 53 (1): 107–21.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="mrp-intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
